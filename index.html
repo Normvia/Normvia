@@ -1,59 +1,89 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Normvia</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #0f0f0f;
-      color: #f4f4f4;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
-      text-align: center;
-      background-image: url('https://upload.wikimedia.org/wikipedia/commons/f/f7/CMS_Higgs-event.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    h1 {
-      font-size: 4rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #00ffe1;
-      text-shadow: 0 0 15px #00ffe1;
-      margin: 0;
-    }
-
-    h2 {
-      font-size: 1.8rem;
-      margin-top: 1rem;
-      font-weight: 300;
-      color: #aaffee;
-      text-shadow: 0 0 8px #009688;
-    }
-
-    p {
-      font-size: 1rem;
-      color: #ccc;
-      margin-top: 2rem;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-    }
-  </style>
-</head>
-<body>
-  <h1>NORMVIA</h1>
-  <h2>Focus. Prepare. Work Hard.</h2>
-  <p>The future isn’t built by accident.</p>
-</body>
-</html>
+diff --git a/index.html b/index.html
+index 6e512b502314550f1a890783dc8cded47d337182..322461a233dfb7fa72a787f1b8a00922e3a484fd 100644
+--- a/index.html
++++ b/index.html
+@@ -27,33 +27,84 @@
+     h1 {
+       font-size: 4rem;
+       letter-spacing: 2px;
+       text-transform: uppercase;
+       color: #00ffe1;
+       text-shadow: 0 0 15px #00ffe1;
+       margin: 0;
+     }
+ 
+     h2 {
+       font-size: 1.8rem;
+       margin-top: 1rem;
+       font-weight: 300;
+       color: #aaffee;
+       text-shadow: 0 0 8px #009688;
+     }
+ 
+     p {
+       font-size: 1rem;
+       color: #ccc;
+       margin-top: 2rem;
+       background-color: rgba(0, 0, 0, 0.6);
+       padding: 0.5rem 1rem;
+       border-radius: 8px;
+     }
++
++    #shooting-stars {
++      position: fixed;
++      top: 0;
++      left: 0;
++      width: 100%;
++      height: 100%;
++      pointer-events: none;
++      overflow: hidden;
++    }
++
++    .star {
++      position: absolute;
++      width: 2px;
++      height: 2px;
++      background: white;
++      box-shadow: 0 0 6px white;
++      border-radius: 50%;
++      animation: tail 1s linear forwards;
++    }
++
++    @keyframes tail {
++      0% {
++        transform: translate(0, 0) scale(1);
++        opacity: 1;
++      }
++      100% {
++        transform: translate(var(--tx), var(--ty)) scale(0);
++        opacity: 0;
++      }
++    }
+   </style>
+ </head>
+ <body>
+   <h1>NORMVIA</h1>
+   <h2>Focus. Prepare. Work Hard.</h2>
+   <p>The future isn’t built by accident.</p>
++  <div id="shooting-stars"></div>
++
++  <script>
++    function createStar() {
++      const star = document.createElement('div');
++      star.className = 'star';
++      const startX = Math.random() * window.innerWidth;
++      const startY = Math.random() * window.innerHeight * 0.5; // upper half
++      star.style.left = startX + 'px';
++      star.style.top = startY + 'px';
++      const tx = -200 - Math.random() * 400;
++      const ty = 200 + Math.random() * 400;
++      star.style.setProperty('--tx', tx + 'px');
++      star.style.setProperty('--ty', ty + 'px');
++      star.addEventListener('animationend', () => star.remove());
++      document.getElementById('shooting-stars').appendChild(star);
++    }
++
++    setInterval(createStar, 1500);
++  </script>
+ </body>
+ </html>
