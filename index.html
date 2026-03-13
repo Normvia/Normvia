@@ -1,112 +1,394 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="shortcut icon" type="image/png" href="favicon.png">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Normvia</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      font-family: 'Arial', sans-serif;
-      text-align: center;
-      overflow: hidden;
-    }
-
-    h1 {
-      font-size: 4rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #00ffe1;
-      text-shadow: 0 0 15px #00ffe1;
-      margin: 0;
-    }
-
-    h2 {
-      font-size: 1.8rem;
-      margin-top: 1rem;
-      font-weight: 300;
-      color: #aaffee;
-      text-shadow: 0 0 8px #009688;
-    }
-
-    p {
-      font-size: 1rem;
-      color: #ccc;
-      margin-top: 2rem;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-    }
-
-    #shooting-stars {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: -1;
-    }
-
-    .star {
-      position: absolute;
-      width: 3px;
-      height: 3px;
-      background: #00ffe1;
-      box-shadow: 0 0 12px #00ffe1, 0 0 20px #00ffe1;
-      border-radius: 50%;
-      animation: tail 1.5s linear forwards;
-    }
-
-    @keyframes tail {
-      0% {
-        transform: translate(0, 0) scale(1.2);
-        opacity: 1;
+<html lang="en" class="h-full bg-zinc-950">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="favicon.png" />
+    <title>Infinite Runway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .image-layer { transition: opacity 850ms ease; }
+      .glass {
+        background: linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.02));
+        backdrop-filter: blur(10px);
       }
-      100% {
-        transform: translate(var(--tx), var(--ty)) scale(0);
-        opacity: 0;
+      .loader {
+        width: 42px;
+        height: 42px;
+        border: 3px solid rgba(255,255,255,.25);
+        border-top-color: rgb(232 121 249);
+        border-radius: 9999px;
+        animation: spin .85s linear infinite;
       }
-    }
-  </style>
-</head>
-<body>
-  <h1>NORMVIA</h1>
-  <h2>Focus. Prepare. Work Hard.</h2>
-  <p>The future isn’t built by accident.</p>
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+  </head>
+  <body class="min-h-full bg-zinc-950 text-zinc-100">
+    <div class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 p-4 md:p-8">
+      <header class="glass rounded-2xl border border-white/10 p-4 md:p-6">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 class="text-2xl font-semibold tracking-[0.25em] text-fuchsia-200 md:text-3xl">INFINITE RUNWAY</h1>
+            <p class="mt-1 text-sm text-zinc-300">A continuous AI fashion show with a consistent reference model.</p>
+          </div>
+          <button id="fullscreenBtn" class="rounded-lg border border-fuchsia-300/40 px-3 py-2 text-sm text-fuchsia-100 transition hover:bg-fuchsia-400/20">Toggle Fullscreen</button>
+        </div>
 
-  <div id="shooting-stars"></div>
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-zinc-300">OpenAI API Key</span>
+            <input id="openaiKey" type="password" placeholder="sk-..." class="rounded-lg border border-white/15 bg-black/40 px-3 py-2 outline-none ring-fuchsia-400/40 focus:ring" />
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-zinc-300">Replicate API Key</span>
+            <input id="replicateKey" type="password" placeholder="r8_..." class="rounded-lg border border-white/15 bg-black/40 px-3 py-2 outline-none ring-fuchsia-400/40 focus:ring" />
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-zinc-300">Base Reference Image (required)</span>
+            <input id="referenceInput" type="file" accept="image/*" class="rounded-lg border border-white/15 bg-black/40 px-3 py-2 file:mr-3 file:rounded file:border-0 file:bg-fuchsia-500/25 file:px-3 file:py-1 file:text-fuchsia-100" />
+          </label>
+          <div class="rounded-lg border border-amber-300/25 bg-amber-300/10 p-3 text-xs text-amber-100">
+            <p class="font-medium">How to get keys</p>
+            <ul class="ml-4 mt-1 list-disc space-y-1">
+              <li>OpenAI: platform.openai.com → API keys.</li>
+              <li>Replicate: replicate.com → Account → API tokens.</li>
+              <li>No keys = auto mock mode (safe demo mode).</li>
+            </ul>
+          </div>
+        </div>
 
-  <script>
-    function createStar() {
-      const star = document.createElement('div');
-      star.className = 'star';
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+          <button id="startBtn" class="rounded-lg bg-fuchsia-500 px-4 py-2 font-medium text-white transition hover:bg-fuchsia-400">Start Runway</button>
+          <button id="playPauseBtn" class="rounded-lg border border-white/20 px-4 py-2" disabled>Pause</button>
+          <button id="newOutfitBtn" class="rounded-lg border border-white/20 px-4 py-2" disabled>New Outfit Now</button>
+          <label class="flex items-center gap-2 text-sm text-zinc-300">
+            <span>Speed</span>
+            <input id="speedRange" type="range" min="5" max="30" value="10" class="accent-fuchsia-400" />
+            <span id="speedLabel" class="w-14 text-zinc-100">10s</span>
+          </label>
+          <span id="modeBadge" class="rounded-full border border-cyan-300/40 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-100">Mode: waiting</span>
+        </div>
+      </header>
 
-      const startX = Math.random() * window.innerWidth;
-      const startY = Math.random() * window.innerHeight * 0.8;
-      star.style.left = `${startX}px`;
-      star.style.top = `${startY}px`;
+      <main class="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr]">
+        <section class="glass relative overflow-hidden rounded-2xl border border-white/10 p-4">
+          <div class="relative mx-auto flex aspect-[4/5] w-full max-w-2xl items-center justify-center overflow-hidden rounded-xl bg-zinc-900">
+            <img id="imageA" class="image-layer absolute inset-0 h-full w-full object-cover opacity-100" alt="Runway image layer A" />
+            <img id="imageB" class="image-layer absolute inset-0 h-full w-full object-cover opacity-0" alt="Runway image layer B" />
+            <div id="loadingOverlay" class="absolute inset-0 hidden flex-col items-center justify-center gap-3 bg-black/50">
+              <div class="loader"></div>
+              <p class="text-sm">Designing next look...</p>
+            </div>
+          </div>
+        </section>
 
-      const tx = -300 - Math.random() * 600;
-      const ty = 300 + Math.random() * 600;
-      star.style.setProperty('--tx', `${tx}px`);
-      star.style.setProperty('--ty', `${ty}px`);
+        <aside class="glass flex flex-col gap-4 rounded-2xl border border-white/10 p-4 md:p-6">
+          <div>
+            <h2 class="text-xs uppercase tracking-[0.25em] text-zinc-400">Current Outfit</h2>
+            <p id="outfitName" class="mt-2 text-xl font-semibold text-fuchsia-100">Awaiting first generation...</p>
+            <p id="outfitDescription" class="mt-3 text-sm leading-relaxed text-zinc-200">Upload a reference image, optionally add API keys, then click Start Runway.</p>
+          </div>
+          <div class="mt-auto rounded-xl border border-white/10 bg-black/20 p-3 text-xs text-zinc-300">
+            <p class="font-medium text-zinc-100">Runtime flow</p>
+            <ol class="ml-4 mt-2 list-decimal space-y-1">
+              <li>Every cycle creates a new outfit concept from OpenAI.</li>
+              <li>A strict prompt keeps the same girl identity from your reference photo.</li>
+              <li>Replicate FLUX image-to-image renders the updated outfit.</li>
+              <li>Fresh image fades in and text updates.</li>
+            </ol>
+          </div>
+        </aside>
+      </main>
+    </div>
 
-      star.addEventListener('animationend', () => star.remove());
-      document.getElementById('shooting-stars').appendChild(star);
-    }
+    <script>
+      const state = {
+        running: false,
+        paused: false,
+        timerId: null,
+        activeImage: 'A',
+        generating: false,
+        lookCount: 0,
+        speedSeconds: Number(localStorage.getItem('infiniteRunway.speed') || 10),
+        baseImageBase64: localStorage.getItem('infiniteRunway.reference') || '',
+      };
 
-    setInterval(createStar, 200);
-  </script>
-</body>
+      const els = {
+        openaiKey: document.getElementById('openaiKey'),
+        replicateKey: document.getElementById('replicateKey'),
+        referenceInput: document.getElementById('referenceInput'),
+        startBtn: document.getElementById('startBtn'),
+        playPauseBtn: document.getElementById('playPauseBtn'),
+        newOutfitBtn: document.getElementById('newOutfitBtn'),
+        speedRange: document.getElementById('speedRange'),
+        speedLabel: document.getElementById('speedLabel'),
+        modeBadge: document.getElementById('modeBadge'),
+        loadingOverlay: document.getElementById('loadingOverlay'),
+        outfitName: document.getElementById('outfitName'),
+        outfitDescription: document.getElementById('outfitDescription'),
+        imageA: document.getElementById('imageA'),
+        imageB: document.getElementById('imageB'),
+        fullscreenBtn: document.getElementById('fullscreenBtn'),
+      };
+
+      const mockOutfits = [
+        { name: 'Midnight Orchid Armor', description: 'A sculpted violet-black liquid satin trench over mirrored petal corsetry, graphite silk leggings, and chrome floral ear cuffs for futuristic aristocrat energy.' },
+        { name: 'Solar Weave Nomad', description: 'Amber mesh cape with braided copper filaments, matte ivory bodysuit, stacked resin bangles, and woven leather moon boots for desert-tech wanderer glamour.' },
+        { name: 'Velvet Neon Sonata', description: 'Ink velvet mini-dress sliced with neon piping, translucent opera gloves, lilac crystal choker, and lacquered platform heels for midnight nightclub royalty.' },
+      ];
+
+      function makeMockImage(outfitName, description) {
+        const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1000' height='1250'>
+          <defs>
+            <linearGradient id='bg' x1='0' y1='0' x2='1' y2='1'>
+              <stop offset='0%' stop-color='#09090b'/>
+              <stop offset='100%' stop-color='#4a044e'/>
+            </linearGradient>
+          </defs>
+          <rect width='100%' height='100%' fill='url(#bg)'/>
+          <text x='50%' y='45%' fill='#f5d0fe' font-size='62' text-anchor='middle' font-family='Arial'>${outfitName.replace(/&/g, '&amp;')}</text>
+          <text x='50%' y='53%' fill='#fce7f3' font-size='28' text-anchor='middle' font-family='Arial'>Mock runway render</text>
+          <foreignObject x='130' y='720' width='740' height='390'>
+            <div xmlns='http://www.w3.org/1999/xhtml' style='color:#f4f4f5;font-family:Arial;font-size:26px;line-height:1.35;text-align:center;'>${description.replace(/&/g, '&amp;')}</div>
+          </foreignObject>
+        </svg>`;
+        return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+      }
+
+      function saveConfig() {
+        localStorage.setItem('infiniteRunway.openaiKey', els.openaiKey.value.trim());
+        localStorage.setItem('infiniteRunway.replicateKey', els.replicateKey.value.trim());
+        localStorage.setItem('infiniteRunway.speed', String(state.speedSeconds));
+      }
+
+      function updateModeBadge() {
+        const hasKeys = Boolean(els.openaiKey.value.trim() && els.replicateKey.value.trim());
+        const mode = hasKeys ? 'live APIs' : 'mock fallback';
+        els.modeBadge.textContent = `Mode: ${mode}`;
+      }
+
+      function setLoading(active) {
+        els.loadingOverlay.classList.toggle('hidden', !active);
+      }
+
+      function parseOutfit(rawText) {
+        const lines = rawText.split('\n').map((l) => l.trim()).filter(Boolean);
+        let name = '';
+        let description = '';
+        for (const line of lines) {
+          if (line.toLowerCase().startsWith('name:')) name = line.replace(/^name:\s*/i, '').trim();
+          if (line.toLowerCase().startsWith('description:')) description = line.replace(/^description:\s*/i, '').trim();
+        }
+        return {
+          name: name || `Look ${state.lookCount + 1}`,
+          description: description || rawText.trim() || 'Experimental couture look.',
+        };
+      }
+
+      async function getOutfit() {
+        if (!els.openaiKey.value.trim()) {
+          return mockOutfits[state.lookCount % mockOutfits.length];
+        }
+
+        const prompt = 'You are a wildly creative fashion designer. Invent a completely new, original outfit concept with theme, materials, colors, accessories, and vibe. Make it unique and surprising. Output only: Name: ... Description: ...';
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${els.openaiKey.value.trim()}`,
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o',
+            temperature: 1.2,
+            messages: [{ role: 'user', content: prompt }],
+          }),
+        });
+
+        if (!response.ok) throw new Error(`OpenAI request failed (${response.status})`);
+        const data = await response.json();
+        const raw = data?.choices?.[0]?.message?.content || '';
+        return parseOutfit(raw);
+      }
+
+      async function getRunwayImage(promptText, outfit) {
+        const hasLiveImageMode = Boolean(els.replicateKey.value.trim() && state.baseImageBase64);
+        if (!hasLiveImageMode) return makeMockImage(outfit.name, outfit.description);
+
+        const submit = await fetch('https://api.replicate.com/v1/models/black-forest-labs/flux-kontext-pro/predictions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${els.replicateKey.value.trim()}`,
+          },
+          body: JSON.stringify({
+            input: {
+              prompt: promptText,
+              input_image: state.baseImageBase64,
+              aspect_ratio: '4:5',
+              output_format: 'jpg',
+              prompt_upsampling: true,
+            },
+          }),
+        });
+
+        if (!submit.ok) throw new Error(`Replicate submit failed (${submit.status})`);
+        const prediction = await submit.json();
+        const pollUrl = prediction?.urls?.get;
+        if (!pollUrl) throw new Error('Replicate poll URL missing');
+
+        for (let i = 0; i < 80; i += 1) {
+          await new Promise((resolve) => setTimeout(resolve, 1200));
+          const poll = await fetch(pollUrl, { headers: { Authorization: `Bearer ${els.replicateKey.value.trim()}` } });
+          const data = await poll.json();
+          if (data.status === 'succeeded') {
+            if (Array.isArray(data.output)) return data.output[0];
+            return data.output;
+          }
+          if (data.status === 'failed' || data.status === 'canceled') {
+            throw new Error(`Replicate ${data.status}`);
+          }
+        }
+
+        throw new Error('Replicate timed out');
+      }
+
+      function crossFade(url) {
+        const current = state.activeImage === 'A' ? els.imageA : els.imageB;
+        const next = state.activeImage === 'A' ? els.imageB : els.imageA;
+
+        next.onload = () => {
+          next.style.opacity = '1';
+          current.style.opacity = '0';
+          state.activeImage = state.activeImage === 'A' ? 'B' : 'A';
+        };
+        next.onerror = () => {
+          const fallback = makeMockImage('Image error fallback', 'Could not load generated image URL.');
+          next.src = fallback;
+        };
+        next.src = url;
+      }
+
+      async function generateLook() {
+        if (state.generating) return;
+        state.generating = true;
+        setLoading(true);
+
+        try {
+          const outfit = await getOutfit();
+          const imagePrompt = `Exact same girl as reference image, identical face, hair, body, pose, lighting and expression, now wearing ${outfit.description}, high-detail studio fashion photography`;
+
+          let imageUrl;
+          try {
+            imageUrl = await getRunwayImage(imagePrompt, outfit);
+          } catch (error) {
+            console.warn('Image generation fallback:', error.message);
+            imageUrl = makeMockImage(outfit.name, outfit.description);
+          }
+
+          crossFade(imageUrl);
+          els.outfitName.textContent = outfit.name;
+          els.outfitDescription.textContent = outfit.description;
+          state.lookCount += 1;
+        } catch (error) {
+          els.outfitName.textContent = 'Generation error';
+          els.outfitDescription.textContent = `${error.message}. Check your keys or use mock mode.`;
+        } finally {
+          setLoading(false);
+          state.generating = false;
+        }
+      }
+
+      function restartTimer() {
+        if (state.timerId) clearInterval(state.timerId);
+        state.timerId = setInterval(() => {
+          if (state.running && !state.paused) generateLook();
+        }, state.speedSeconds * 1000);
+      }
+
+      function requireReferenceImage() {
+        if (state.baseImageBase64) return true;
+        els.outfitName.textContent = 'Reference image required';
+        els.outfitDescription.textContent = 'Upload one base model image first. It is stored in localStorage as base64 and used for character consistency.';
+        return false;
+      }
+
+      function bindEvents() {
+        [els.openaiKey, els.replicateKey].forEach((input) => {
+          input.addEventListener('input', () => {
+            saveConfig();
+            updateModeBadge();
+          });
+        });
+
+        els.referenceInput.addEventListener('change', (event) => {
+          const file = event.target.files?.[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            state.baseImageBase64 = reader.result;
+            localStorage.setItem('infiniteRunway.reference', state.baseImageBase64);
+            els.outfitDescription.textContent = 'Reference image uploaded and saved locally.';
+          };
+          reader.readAsDataURL(file);
+        });
+
+        els.speedRange.addEventListener('input', () => {
+          state.speedSeconds = Number(els.speedRange.value);
+          els.speedLabel.textContent = `${state.speedSeconds}s`;
+          saveConfig();
+          if (state.running) restartTimer();
+        });
+
+        els.startBtn.addEventListener('click', async () => {
+          if (!requireReferenceImage()) return;
+          state.running = true;
+          state.paused = false;
+          els.playPauseBtn.disabled = false;
+          els.newOutfitBtn.disabled = false;
+          els.playPauseBtn.textContent = 'Pause';
+          els.startBtn.textContent = 'Restart Runway';
+          restartTimer();
+          await generateLook();
+        });
+
+        els.playPauseBtn.addEventListener('click', () => {
+          if (!state.running) return;
+          state.paused = !state.paused;
+          els.playPauseBtn.textContent = state.paused ? 'Play' : 'Pause';
+        });
+
+        els.newOutfitBtn.addEventListener('click', () => {
+          if (!requireReferenceImage()) return;
+          generateLook();
+        });
+
+        els.fullscreenBtn.addEventListener('click', async () => {
+          if (!document.fullscreenElement) {
+            await document.documentElement.requestFullscreen();
+          } else {
+            await document.exitFullscreen();
+          }
+        });
+      }
+
+      function init() {
+        els.openaiKey.value = localStorage.getItem('infiniteRunway.openaiKey') || '';
+        els.replicateKey.value = localStorage.getItem('infiniteRunway.replicateKey') || '';
+        els.speedRange.value = state.speedSeconds;
+        els.speedLabel.textContent = `${state.speedSeconds}s`;
+        updateModeBadge();
+
+        if (state.baseImageBase64) {
+          els.outfitDescription.textContent = 'Reference image restored from localStorage. Ready to start.';
+        }
+
+        const intro = makeMockImage('Infinite Runway', 'Upload a reference image and press Start Runway to begin.');
+        els.imageA.src = intro;
+        bindEvents();
+      }
+
+      init();
+    </script>
+  </body>
 </html>
