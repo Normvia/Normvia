@@ -375,6 +375,47 @@
         transform: rotate(var(--angle)) translateX(var(--distance)) scale(1.1);
       }
     }
+    #cosmic-explosions {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .explosion {
+      position: absolute;
+      width: 0;
+      height: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: var(--size);
+      height: var(--size);
+      margin-left: calc(var(--size) / -2);
+      margin-top: calc(var(--size) / -2);
+      border-radius: 50%;
+      opacity: 0;
+      background: radial-gradient(circle, #fff 0%, var(--particle-color) 45%, transparent 75%);
+      box-shadow: 0 0 18px var(--particle-color), 0 0 42px color-mix(in srgb, var(--particle-color) 65%, transparent);
+      animation: explode var(--duration) ease-out forwards;
+      transform: rotate(var(--angle)) translateX(0) scale(0.25);
+    }
+
+    @keyframes explode {
+      0% {
+        opacity: 0;
+        transform: rotate(var(--angle)) translateX(0) scale(0.2);
+      }
+      12% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: rotate(var(--angle)) translateX(var(--distance)) scale(1.1);
+      }
+    }
   </style>
 </head>
 <body>
@@ -408,7 +449,7 @@
 
       const x = Math.random() * window.innerWidth;
       const y = Math.random() * window.innerHeight;
-      const particleCount = 24 + Math.floor(Math.random() * 16);
+      const particleCount = 40 + Math.floor(Math.random() * 26);
 
       explosion.style.left = `${x}px`;
       explosion.style.top = `${y}px`;
@@ -420,7 +461,7 @@
         const angle = `${(360 / particleCount) * i + Math.random() * 14 - 7}deg`;
         const distance = `${120 + Math.random() * 220}px`;
         const size = `${5 + Math.random() * 8}px`;
-        const duration = `${1300 + Math.random() * 1200}ms`;
+        const duration = `${700 + Math.random() * 700}ms`;
         const particleColor = explosionPalette[Math.floor(Math.random() * explosionPalette.length)];
 
         particle.style.setProperty('--angle', angle);
@@ -436,11 +477,11 @@
 
       setTimeout(() => {
         explosion.remove();
-      }, 2800);
+      }, 1800);
     }
 
     createExplosion();
-    setInterval(createExplosion, 1500);
+    setInterval(createExplosion, 700);
   </script>
 </body>
 </html>
