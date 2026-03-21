@@ -41,7 +41,7 @@
     .logo svg {
       width: 100%;
       height: 100%;
-      stroke: #fff;
+      stroke: var(--accent);
       fill: none;
       stroke-width: 8;
     }
@@ -57,27 +57,18 @@
 
     p {
       font-size: 1rem;
-      color: #ccc;
+      color: var(--accent);
       margin-top: 1.6rem;
       background-color: rgba(0, 0, 0, 0.65);
       padding: 0.5rem 1rem;
       border-radius: 8px;
     }
-
-    #cosmic-explosions,
-    #shooting-stars {
+    #cosmic-explosions {
       position: fixed;
       inset: 0;
       pointer-events: none;
       overflow: hidden;
-    }
-
-    #cosmic-explosions {
       z-index: 1;
-    }
-
-    #shooting-stars {
-      z-index: 2;
     }
 
     .explosion {
@@ -100,29 +91,6 @@
       transform: rotate(var(--angle)) translateX(0) scale(0.25);
     }
 
-    .star {
-      position: absolute;
-      width: 3px;
-      height: 3px;
-      border-radius: 999px;
-      background: #fff;
-      box-shadow: 0 0 8px #fff, 0 0 18px var(--accent);
-      animation: shoot var(--star-duration) linear forwards;
-      transform: translate(0, 0);
-      opacity: 0;
-    }
-
-    .star::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 110px;
-      height: 2px;
-      transform: translate(-100%, -50%);
-      background: linear-gradient(to left, rgba(255, 255, 255, 0.85), rgba(0, 255, 225, 0));
-    }
-
     @keyframes explode {
       0% {
         opacity: 0;
@@ -134,20 +102,6 @@
       100% {
         opacity: 0;
         transform: rotate(var(--angle)) translateX(var(--distance)) scale(1.1);
-      }
-    }
-
-    @keyframes shoot {
-      0% {
-        opacity: 0;
-        transform: translate(0, 0);
-      }
-      10% {
-        opacity: 1;
-      }
-      100% {
-        opacity: 0;
-        transform: translate(var(--tx), var(--ty));
       }
     }
   </style>
@@ -169,11 +123,9 @@
   <p>The future isn’t built by accident.</p>
 
   <div id="cosmic-explosions"></div>
-  <div id="shooting-stars"></div>
 
   <script>
     const explosionLayer = document.getElementById('cosmic-explosions');
-    const starsLayer = document.getElementById('shooting-stars');
 
     function createExplosion() {
       const explosion = document.createElement('div');
@@ -210,29 +162,8 @@
       }, 2800);
     }
 
-    function createShootingStar() {
-      const star = document.createElement('div');
-      star.className = 'star';
-
-      const startX = Math.random() * window.innerWidth;
-      const startY = Math.random() * (window.innerHeight * 0.45);
-      const tx = -160 - Math.random() * 380;
-      const ty = 120 + Math.random() * 280;
-      const duration = `${900 + Math.random() * 900}ms`;
-
-      star.style.left = `${startX}px`;
-      star.style.top = `${startY}px`;
-      star.style.setProperty('--tx', `${tx}px`);
-      star.style.setProperty('--ty', `${ty}px`);
-      star.style.setProperty('--star-duration', duration);
-
-      star.addEventListener('animationend', () => star.remove());
-      starsLayer.appendChild(star);
-    }
-
     createExplosion();
     setInterval(createExplosion, 1500);
-    setInterval(createShootingStar, 900);
   </script>
 </body>
 </html>
