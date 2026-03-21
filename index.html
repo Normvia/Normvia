@@ -19,8 +19,22 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      background: radial-gradient(circle at center, transparent 45%, rgba(0, 0, 0, 0.58) 100%);
+    }
+
+    .hero {
+      position: relative;
+      z-index: 3;
+      width: min(92vw, 1000px);
+      margin: 0 auto;
       text-align: center;
       overflow: hidden;
     }
@@ -64,6 +78,144 @@
       background-color: rgba(0, 0, 0, 0.65);
       padding: 0.5rem 1rem;
       border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      animation: tagline-fade 1.8s ease-out forwards;
+    }
+
+    #cosmic-explosions {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .explosion {
+      position: absolute;
+      width: 0;
+      height: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: var(--size);
+      height: var(--size);
+      margin-left: calc(var(--size) / -2);
+      margin-top: calc(var(--size) / -2);
+      border-radius: 50%;
+      opacity: 0;
+      background: radial-gradient(circle, rgba(224, 250, 255, 0.9) 0%, rgba(0, 255, 225, 0.58) 40%, transparent 76%);
+      box-shadow: 0 0 12px rgba(0, 255, 225, 0.45), 0 0 28px rgba(0, 255, 225, 0.2);
+      animation: explode var(--duration) ease-out forwards;
+      transform: rotate(var(--angle)) translateX(0) scale(0.25);
+    }
+
+    @keyframes explode {
+      0% {
+        opacity: 0;
+        transform: rotate(var(--angle)) translateX(0) scale(0.2);
+      }
+      14% {
+        opacity: 0.6;
+      }
+      100% {
+        opacity: 0;
+        transform: rotate(var(--angle)) translateX(var(--distance)) scale(1.05);
+      }
+    }
+
+    @keyframes wordmark-pulse {
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 0.96;
+      }
+      50% {
+        transform: scale(1.01);
+        opacity: 1;
+      }
+    }
+
+    @keyframes logo-breathe {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.03);
+      }
+    }
+
+    @keyframes tagline-fade {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        gap: 0.8rem;
+      }
+
+      p {
+        max-width: 90%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logo,
+      h1,
+      p,
+      .particle {
+        animation: none !important;
+      }
+    }
+    #cosmic-explosions {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .explosion {
+      position: absolute;
+      width: 0;
+      height: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: var(--size);
+      height: var(--size);
+      margin-left: calc(var(--size) / -2);
+      margin-top: calc(var(--size) / -2);
+      border-radius: 50%;
+      opacity: 0;
+      background: radial-gradient(circle, #fff 0%, var(--accent) 45%, transparent 75%);
+      box-shadow: 0 0 18px var(--accent), 0 0 42px rgba(0, 255, 225, 0.8);
+      animation: explode var(--duration) ease-out forwards;
+      transform: rotate(var(--angle)) translateX(0) scale(0.25);
+    }
+
+    @keyframes explode {
+      0% {
+        opacity: 0;
+        transform: rotate(var(--angle)) translateX(0) scale(0.2);
+      }
+      12% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: rotate(var(--angle)) translateX(var(--distance)) scale(1.1);
+      }
     }
     #cosmic-explosions {
       position: fixed;
