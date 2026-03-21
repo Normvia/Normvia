@@ -39,17 +39,21 @@
       overflow: hidden;
     }
 
-    .logo,
-    h1,
-    p {
+    .hero {
       position: relative;
       z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 1rem;
     }
 
     .logo {
       width: 150px;
       height: 150px;
-      margin-bottom: 1rem;
+      margin: 0;
       opacity: 0.95;
     }
 
@@ -74,7 +78,7 @@
     p {
       font-size: 1rem;
       color: var(--accent);
-      margin-top: 1.6rem;
+      margin: 0;
       background-color: rgba(0, 0, 0, 0.65);
       padding: 0.5rem 1rem;
       border-radius: 8px;
@@ -258,9 +262,51 @@
         transform: rotate(var(--angle)) translateX(var(--distance)) scale(1.1);
       }
     }
+    #cosmic-explosions {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .explosion {
+      position: absolute;
+      width: 0;
+      height: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: var(--size);
+      height: var(--size);
+      margin-left: calc(var(--size) / -2);
+      margin-top: calc(var(--size) / -2);
+      border-radius: 50%;
+      opacity: 0;
+      background: radial-gradient(circle, #fff 0%, var(--accent) 45%, transparent 75%);
+      box-shadow: 0 0 18px var(--accent), 0 0 42px rgba(0, 255, 225, 0.8);
+      animation: explode var(--duration) ease-out forwards;
+      transform: rotate(var(--angle)) translateX(0) scale(0.25);
+    }
+
+    @keyframes explode {
+      0% {
+        opacity: 0;
+        transform: rotate(var(--angle)) translateX(0) scale(0.2);
+      }
+      12% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: rotate(var(--angle)) translateX(var(--distance)) scale(1.1);
+      }
+    }
   </style>
 </head>
 <body>
+  <main class="hero" aria-label="Normvia hero">
   <div class="logo" aria-hidden="true">
     <svg viewBox="0 0 512 512" role="img" aria-label="Normvia logo mark">
       <g transform="translate(256 256)">
@@ -275,6 +321,8 @@
   </div>
   <h1>NORMVIA</h1>
   <p>The future isn’t built by accident.</p>
+
+  </main>
 
   <div id="cosmic-explosions"></div>
 
