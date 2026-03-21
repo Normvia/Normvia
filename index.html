@@ -187,6 +187,47 @@
         animation: none !important;
       }
     }
+    #cosmic-explosions {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .explosion {
+      position: absolute;
+      width: 0;
+      height: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: var(--size);
+      height: var(--size);
+      margin-left: calc(var(--size) / -2);
+      margin-top: calc(var(--size) / -2);
+      border-radius: 50%;
+      opacity: 0;
+      background: radial-gradient(circle, #fff 0%, var(--accent) 45%, transparent 75%);
+      box-shadow: 0 0 18px var(--accent), 0 0 42px rgba(0, 255, 225, 0.8);
+      animation: explode var(--duration) ease-out forwards;
+      transform: rotate(var(--angle)) translateX(0) scale(0.25);
+    }
+
+    @keyframes explode {
+      0% {
+        opacity: 0;
+        transform: rotate(var(--angle)) translateX(0) scale(0.2);
+      }
+      12% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: rotate(var(--angle)) translateX(var(--distance)) scale(1.1);
+      }
+    }
   </style>
 </head>
 <body>
