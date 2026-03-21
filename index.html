@@ -1,9 +1,202 @@
 <!DOCTYPE html>
+<html lang="en">
 <html lang="en" class="h-full bg-slate-950">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="favicon.png" />
+    <title>Normvia</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #02030b;
+        font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+
+      #cosmos {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .center {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .brand {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+      }
+
+      .brand img {
+        width: min(38vw, 220px);
+        height: auto;
+        filter: drop-shadow(0 0 24px rgba(255, 255, 255, 0.45));
+      }
+
+      .brand h1 {
+        margin: 0;
+        color: #ffffff;
+        letter-spacing: 0.35rem;
+        text-transform: uppercase;
+        font-size: clamp(2rem, 7vw, 4.5rem);
+        text-shadow:
+          0 0 12px rgba(255, 255, 255, 0.7),
+          0 0 30px rgba(115, 90, 255, 0.5),
+          0 0 52px rgba(45, 196, 255, 0.45);
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="cosmos" aria-hidden="true"></canvas>
+
+    <main class="center" role="main" aria-label="Normvia landing page">
+      <div class="brand">
+        <img src="favicon.png" alt="Normvia logo" />
+        <h1>Normvia</h1>
+      </div>
+    </main>
+
+    <script>
+      const canvas = document.getElementById('cosmos');
+      const ctx = canvas.getContext('2d');
+      let width = 0;
+      let height = 0;
+      const stars = [];
+      const sparks = [];
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        const ratio = window.devicePixelRatio || 1;
+        canvas.width = Math.floor(width * ratio);
+        canvas.height = Math.floor(height * ratio);
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+        if (!stars.length) {
+          for (let i = 0; i < 160; i += 1) {
+            stars.push({
+              x: Math.random() * width,
+              y: Math.random() * height,
+              r: Math.random() * 1.4 + 0.3,
+              a: Math.random() * 0.65 + 0.2,
+              twinkle: Math.random() * 0.03 + 0.004,
+            });
+          }
+        }
+      }
+
+      function burst(x, y, magnitude = 1) {
+        const particles = Math.floor((30 + Math.random() * 36) * magnitude);
+        const hue = 190 + Math.random() * 95;
+
+        for (let i = 0; i < particles; i += 1) {
+          const speed = (Math.random() * 3.2 + 0.4) * magnitude;
+          const angle = Math.random() * Math.PI * 2;
+          sparks.push({
+            x,
+            y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 0,
+            maxLife: Math.random() * 75 + 45,
+            size: Math.random() * 2.6 + 0.5,
+            hue: hue + (Math.random() * 30 - 15),
+          });
+        }
+      }
+
+      function drawNebula() {
+        const gradient = ctx.createRadialGradient(width * 0.5, height * 0.5, 10, width * 0.5, height * 0.5, Math.max(width, height) * 0.7);
+        gradient.addColorStop(0, 'rgba(20, 55, 130, 0.20)');
+        gradient.addColorStop(0.35, 'rgba(75, 20, 130, 0.12)');
+        gradient.addColorStop(0.7, 'rgba(6, 8, 26, 0.35)');
+        gradient.addColorStop(1, 'rgba(2, 3, 11, 0.96)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      function update() {
+        drawNebula();
+
+        for (const star of stars) {
+          star.a += (Math.random() - 0.5) * star.twinkle;
+          star.a = Math.min(0.9, Math.max(0.15, star.a));
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255,255,255,${star.a})`;
+          ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        for (let i = sparks.length - 1; i >= 0; i -= 1) {
+          const p = sparks[i];
+          p.life += 1;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vx *= 0.988;
+          p.vy *= 0.988;
+          p.vy += 0.003;
+
+          const t = p.life / p.maxLife;
+          const alpha = Math.max(0, 1 - t);
+          const glow = 20 * alpha;
+
+          ctx.beginPath();
+          ctx.fillStyle = `hsla(${p.hue}, 95%, 68%, ${alpha})`;
+          ctx.shadowBlur = glow;
+          ctx.shadowColor = `hsla(${p.hue}, 95%, 68%, ${alpha})`;
+          ctx.arc(p.x, p.y, p.size * (1 - t * 0.5), 0, Math.PI * 2);
+          ctx.fill();
+
+          if (p.life >= p.maxLife) {
+            sparks.splice(i, 1);
+          }
+        }
+
+        ctx.shadowBlur = 0;
+
+        requestAnimationFrame(update);
+      }
+
+      function scheduleRandomBursts() {
+        const delay = 600 + Math.random() * 1300;
+        setTimeout(() => {
+          burst(Math.random() * width, Math.random() * height, 0.7 + Math.random() * 1.05);
+          scheduleRandomBursts();
+        }, delay);
+      }
+
+      window.addEventListener('resize', resize);
+
+      resize();
+      for (let i = 0; i < 4; i += 1) {
+        burst(Math.random() * width, Math.random() * height, 0.8 + Math.random() * 0.8);
+      }
+      scheduleRandomBursts();
+      update();
     <link rel="shortcut icon" type="image/png" href="favicon.png" />
     <title>Normvia | Build Smarter Growth Systems</title>
     <script src="https://cdn.tailwindcss.com"></script>
