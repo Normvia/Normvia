@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="normvia-logo.svg" />
     <title>Normvia</title>
     <style>
       :root {
@@ -49,14 +49,21 @@
       }
 
       .brand img {
-        width: min(52vw, 320px);
+        width: min(36vw, 220px);
         height: auto;
         object-fit: contain;
         image-rendering: -webkit-optimize-contrast;
         image-rendering: crisp-edges;
-        filter: drop-shadow(0 0 24px rgba(255, 255, 255, 0.45));
       }
 
+      .brand .tagline {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.92);
+        font-size: clamp(0.9rem, 2.2vw, 1.2rem);
+        letter-spacing: 0.05rem;
+        text-align: center;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+      }
       .brand h1 {
         margin: 0;
         color: #ffffff;
@@ -75,8 +82,9 @@
 
     <main class="center" role="main" aria-label="Normvia landing page">
       <div class="brand">
-        <img src="favicon.png" alt="Normvia logo" />
+        <img src="normvia-logo.svg" alt="Normvia logo" />
         <h1>Normvia</h1>
+        <p class="tagline">The future isn't built by accident.</p>
       </div>
     </main>
 
@@ -113,7 +121,7 @@
 
       function burst(x, y, magnitude = 1) {
         const particles = Math.floor((30 + Math.random() * 36) * magnitude);
-        const hue = 190 + Math.random() * 95;
+        const hue = Math.random() * 360;
 
         for (let i = 0; i < particles; i += 1) {
           const speed = (Math.random() * 3.2 + 0.4) * magnitude;
@@ -126,7 +134,7 @@
             life: 0,
             maxLife: Math.random() * 75 + 45,
             size: Math.random() * 2.6 + 0.5,
-            hue: hue + (Math.random() * 30 - 15),
+            hue: (hue + Math.random() * 90 - 45 + 360) % 360,
           });
         }
       }
@@ -140,9 +148,9 @@
           height * 0.5,
           Math.max(width, height) * 0.7
         );
-        gradient.addColorStop(0, 'rgba(30, 80, 180, 0.16)');
-        gradient.addColorStop(0.35, 'rgba(95, 20, 160, 0.09)');
-        gradient.addColorStop(0.7, 'rgba(0, 0, 0, 0.6)');
+        gradient.addColorStop(0, 'rgba(0, 0, 0, 0.15)');
+        gradient.addColorStop(0.45, 'rgba(0, 0, 0, 0.45)');
+        gradient.addColorStop(0.7, 'rgba(0, 0, 0, 0.75)');
         gradient.addColorStop(1, 'rgba(0, 0, 0, 0.98)');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
