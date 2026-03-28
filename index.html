@@ -48,22 +48,10 @@
         gap: 1.5rem;
       }
 
-      .logo-mark {
-        width: min(44vw, 280px);
+      .brand img {
+        width: min(38vw, 220px);
         height: auto;
         filter: drop-shadow(0 0 24px rgba(255, 255, 255, 0.45));
-      }
-
-      .brand h1 {
-        margin: 0;
-        color: #ffffff;
-        letter-spacing: 0.35rem;
-        text-transform: uppercase;
-        font-size: clamp(2rem, 7vw, 4.5rem);
-        text-shadow:
-          0 0 12px rgba(255, 255, 255, 0.7),
-          0 0 30px rgba(115, 90, 255, 0.5),
-          0 0 52px rgba(45, 196, 255, 0.45);
       }
     </style>
   </head>
@@ -89,6 +77,29 @@
             <circle cx="256" cy="256" r="68" />
           </g>
         </svg>
+        <h1>Normvia</h1>
+      </div>
+    </main>
+
+      .brand h1 {
+        margin: 0;
+        color: #ffffff;
+        letter-spacing: 0.35rem;
+        text-transform: uppercase;
+        font-size: clamp(2rem, 7vw, 4.5rem);
+        text-shadow:
+          0 0 12px rgba(255, 255, 255, 0.7),
+          0 0 30px rgba(115, 90, 255, 0.5),
+          0 0 52px rgba(45, 196, 255, 0.45);
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="cosmos" aria-hidden="true"></canvas>
+
+    <main class="center" role="main" aria-label="Normvia landing page">
+      <div class="brand">
+        <img src="favicon.png" alt="Normvia logo" />
         <h1>Normvia</h1>
       </div>
     </main>
