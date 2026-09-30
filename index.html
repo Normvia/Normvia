@@ -42,8 +42,8 @@
           radial-gradient(
             ellipse at 50% 45%,
             rgba(0, 0, 0, 0) 0%,
-            rgba(0, 0, 0, 0.35) 55%,
-            rgba(0, 0, 0, 0.85) 100%
+            rgba(0, 0, 0, 0.12) 62%,
+            rgba(0, 0, 0, 0.45) 100%
           );
       }
 
@@ -71,16 +71,20 @@
         object-fit: contain;
         image-rendering: -webkit-optimize-contrast;
         image-rendering: crisp-edges;
-        filter: drop-shadow(0 0 18px rgba(115, 90, 255, 0.35));
+        filter:
+          drop-shadow(0 0 14px rgba(115, 90, 255, 0.65))
+          drop-shadow(0 0 28px rgba(45, 196, 255, 0.35));
       }
 
       .brand .tagline {
         margin: 0;
-        color: rgba(255, 255, 255, 0.92);
+        color: #ffffff;
         font-size: clamp(0.9rem, 2.2vw, 1.2rem);
         letter-spacing: 0.05rem;
         text-align: center;
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+        text-shadow:
+          0 0 8px rgba(255, 255, 255, 0.45),
+          0 0 22px rgba(115, 90, 255, 0.25);
         max-width: 90vw;
       }
 
@@ -91,9 +95,9 @@
         text-transform: uppercase;
         font-size: clamp(2rem, 7vw, 4.5rem);
         text-shadow:
-          0 0 12px rgba(255, 255, 255, 0.7),
-          0 0 30px rgba(115, 90, 255, 0.5),
-          0 0 52px rgba(45, 196, 255, 0.45);
+          0 0 14px rgba(255, 255, 255, 0.85),
+          0 0 28px rgba(115, 90, 255, 0.75),
+          0 0 48px rgba(45, 196, 255, 0.55);
       }
     </style>
   </head>
@@ -132,15 +136,15 @@
         ];
 
         const rings = [
-          { rx: 0.28, ry: 0.18, depth: 0.55, alpha: 0.08, hue: 250, rot: 0, spin: 0.00012 },
-          { rx: 0.42, ry: 0.26, depth: 0.85, alpha: 0.06, hue: 195, rot: 0.4, spin: -0.00008 },
-          { rx: 0.58, ry: 0.34, depth: 1.15, alpha: 0.045, hue: 280, rot: 1.1, spin: 0.00005 },
+          { rx: 0.28, ry: 0.18, depth: 0.55, alpha: 0.22, hue: 252, rot: 0, spin: 0.00012 },
+          { rx: 0.42, ry: 0.26, depth: 0.85, alpha: 0.18, hue: 195, rot: 0.4, spin: -0.00008 },
+          { rx: 0.58, ry: 0.34, depth: 1.15, alpha: 0.14, hue: 265, rot: 1.1, spin: 0.00005 },
         ];
 
         const planets = [
-          { ox: -0.32, oy: 0.18, r: 28, depth: 0.7, hue: 220, alpha: 0.12 },
-          { ox: 0.38, oy: -0.22, r: 18, depth: 1.0, hue: 270, alpha: 0.1 },
-          { ox: 0.15, oy: 0.32, r: 12, depth: 1.25, hue: 190, alpha: 0.09 },
+          { ox: -0.32, oy: 0.18, r: 28, depth: 0.7, hue: 252, alpha: 0.22 },
+          { ox: 0.38, oy: -0.22, r: 18, depth: 1.0, hue: 265, alpha: 0.18 },
+          { ox: 0.15, oy: 0.32, r: 12, depth: 1.25, hue: 195, alpha: 0.2 },
         ];
 
         const sparks = [];
@@ -162,7 +166,7 @@
                 vx: 0,
                 vy: 0,
                 r: layer.sizeMin + Math.random() * (layer.sizeMax - layer.sizeMin),
-                a: Math.random() * 0.65 + 0.2,
+                a: Math.random() * 0.55 + 0.4,
                 twinkle: Math.random() * 0.025 + 0.004,
                 phase: Math.random() * Math.PI * 2,
               });
@@ -192,7 +196,8 @@
         function burst(x, y, magnitude = 1) {
           if (reducedMotion) return;
           const particles = Math.floor((22 + Math.random() * 28) * magnitude);
-          const hue = Math.random() * 360;
+          // Bias toward violet (#735aff ~252°) and cyan (#2dc4ff ~195°)
+          const hue = Math.random() < 0.5 ? 252 : 195;
           for (let i = 0; i < particles; i += 1) {
             const speed = (Math.random() * 2.8 + 0.35) * magnitude;
             const angle = Math.random() * Math.PI * 2;
@@ -203,8 +208,8 @@
               vy: Math.sin(angle) * speed,
               life: 0,
               maxLife: Math.random() * 70 + 40,
-              size: Math.random() * 2.4 + 0.4,
-              hue: (hue + Math.random() * 90 - 45 + 360) % 360,
+              size: Math.random() * 2.6 + 0.55,
+              hue: (hue + Math.random() * 36 - 18 + 360) % 360,
             });
           }
         }
@@ -213,9 +218,9 @@
           if (reducedMotion) return;
           // Multi-ring pulse
           shockwaves.push(
-            { x, y, r: 0, maxR: Math.max(width, height) * 0.55, life: 0, maxLife: 55, width: 2.8, hue: 250, alpha: 0.55 },
-            { x, y, r: 0, maxR: Math.max(width, height) * 0.38, life: 0, maxLife: 42, width: 1.6, hue: 195, alpha: 0.4 },
-            { x, y, r: 8, maxR: Math.max(width, height) * 0.22, life: 0, maxLife: 32, width: 1.1, hue: 280, alpha: 0.35 }
+            { x, y, r: 0, maxR: Math.max(width, height) * 0.55, life: 0, maxLife: 55, width: 3.4, hue: 252, alpha: 0.85 },
+            { x, y, r: 0, maxR: Math.max(width, height) * 0.38, life: 0, maxLife: 42, width: 2.2, hue: 195, alpha: 0.7 },
+            { x, y, r: 8, maxR: Math.max(width, height) * 0.22, life: 0, maxLife: 32, width: 1.6, hue: 265, alpha: 0.6 }
           );
           // Impulse stars outward from epicenter
           for (const layer of layers) {
@@ -238,6 +243,10 @@
         function drawNebula(ox, oy) {
           const cx = width * 0.5 + ox * 0.3;
           const cy = height * 0.5 + oy * 0.3;
+          // Clean near-black base — minimal haze so accents read on pure black
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(0, 0, width, height);
+
           const gradient = ctx.createRadialGradient(
             cx,
             cy,
@@ -246,35 +255,39 @@
             cy,
             Math.max(width, height) * 0.72
           );
-          gradient.addColorStop(0, 'rgba(12, 8, 28, 0.25)');
-          gradient.addColorStop(0.35, 'rgba(5, 4, 14, 0.55)');
-          gradient.addColorStop(0.7, 'rgba(0, 0, 0, 0.82)');
-          gradient.addColorStop(1, 'rgba(0, 0, 0, 0.98)');
+          gradient.addColorStop(0, 'rgba(18, 10, 42, 0.18)');
+          gradient.addColorStop(0.4, 'rgba(6, 4, 16, 0.12)');
+          gradient.addColorStop(0.75, 'rgba(0, 0, 0, 0.04)');
+          gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
           ctx.fillStyle = gradient;
           ctx.fillRect(0, 0, width, height);
 
+          // Violet glow accent (#735aff-ish)
           const g2 = ctx.createRadialGradient(
             cx - width * 0.18,
             cy + height * 0.1,
             0,
             cx - width * 0.18,
             cy + height * 0.1,
-            Math.max(width, height) * 0.35
+            Math.max(width, height) * 0.38
           );
-          g2.addColorStop(0, 'rgba(90, 60, 180, 0.07)');
+          g2.addColorStop(0, 'rgba(115, 90, 255, 0.2)');
+          g2.addColorStop(0.45, 'rgba(115, 90, 255, 0.08)');
           g2.addColorStop(1, 'rgba(0, 0, 0, 0)');
           ctx.fillStyle = g2;
           ctx.fillRect(0, 0, width, height);
 
+          // Cyan glow accent (#2dc4ff-ish)
           const g3 = ctx.createRadialGradient(
             cx + width * 0.2,
             cy - height * 0.12,
             0,
             cx + width * 0.2,
             cy - height * 0.12,
-            Math.max(width, height) * 0.3
+            Math.max(width, height) * 0.34
           );
-          g3.addColorStop(0, 'rgba(40, 160, 220, 0.05)');
+          g3.addColorStop(0, 'rgba(45, 196, 255, 0.16)');
+          g3.addColorStop(0.45, 'rgba(45, 196, 255, 0.06)');
           g3.addColorStop(1, 'rgba(0, 0, 0, 0)');
           ctx.fillStyle = g3;
           ctx.fillRect(0, 0, width, height);
@@ -292,15 +305,18 @@
             ctx.rotate(rot);
             ctx.scale(1, ring.ry / ring.rx);
             ctx.beginPath();
-            ctx.strokeStyle = `hsla(${ring.hue}, 70%, 70%, ${ring.alpha})`;
-            ctx.lineWidth = 1.2;
+            ctx.strokeStyle = `hsla(${ring.hue}, 90%, 72%, ${ring.alpha})`;
+            ctx.lineWidth = 1.6;
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = `hsla(${ring.hue}, 95%, 70%, ${ring.alpha * 0.9})`;
             ctx.ellipse(0, 0, Math.min(width, height) * ring.rx, Math.min(width, height) * ring.rx, 0, 0, Math.PI * 2);
             ctx.stroke();
             ctx.beginPath();
-            ctx.strokeStyle = `hsla(${ring.hue}, 80%, 75%, ${ring.alpha * 0.5})`;
-            ctx.lineWidth = 0.6;
+            ctx.strokeStyle = `hsla(${ring.hue}, 95%, 78%, ${ring.alpha * 0.7})`;
+            ctx.lineWidth = 0.9;
             ctx.ellipse(0, 0, Math.min(width, height) * ring.rx * 0.97, Math.min(width, height) * ring.rx * 0.97, 0, 0.2, Math.PI * 0.9);
             ctx.stroke();
+            ctx.shadowBlur = 0;
             ctx.restore();
           }
         }
@@ -312,8 +328,8 @@
             const x = cx + p.ox * Math.min(width, height) + px * p.depth * 36;
             const y = cy + p.oy * Math.min(width, height) + py * p.depth * 28;
             const g = ctx.createRadialGradient(x - p.r * 0.3, y - p.r * 0.3, 0, x, y, p.r);
-            g.addColorStop(0, `hsla(${p.hue}, 60%, 55%, ${p.alpha * 1.4})`);
-            g.addColorStop(0.6, `hsla(${p.hue}, 50%, 35%, ${p.alpha})`);
+            g.addColorStop(0, `hsla(${p.hue}, 85%, 68%, ${p.alpha * 1.6})`);
+            g.addColorStop(0.55, `hsla(${p.hue}, 75%, 48%, ${p.alpha})`);
             g.addColorStop(1, 'rgba(0,0,0,0)');
             ctx.beginPath();
             ctx.fillStyle = g;
@@ -361,7 +377,7 @@
 
                 star.a += Math.sin(t * 0.001 + star.phase) * star.twinkle * 0.15;
                 star.a += (Math.random() - 0.5) * star.twinkle * 0.3;
-                star.a = Math.min(0.95, Math.max(0.12, star.a));
+                star.a = Math.min(1, Math.max(0.28, star.a));
               }
 
               let sx = star.x + ox;
@@ -376,10 +392,11 @@
               ctx.arc(sx, sy, star.r, 0, Math.PI * 2);
               ctx.fill();
 
-              if (layer.depth > 0.7 && star.a > 0.55) {
+              if (layer.depth > 0.55 && star.a > 0.4) {
                 ctx.beginPath();
-                ctx.fillStyle = `rgba(180,200,255,${star.a * 0.12})`;
-                ctx.arc(sx, sy, star.r * 3.5, 0, Math.PI * 2);
+                const glowHue = layer.depth > 0.9 ? '45,196,255' : '180,170,255';
+                ctx.fillStyle = `rgba(${glowHue},${star.a * 0.28})`;
+                ctx.arc(sx, sy, star.r * 4.2, 0, Math.PI * 2);
                 ctx.fill();
               }
             }
@@ -398,10 +415,10 @@
             const t = p.life / p.maxLife;
             const alpha = Math.max(0, 1 - t);
             ctx.beginPath();
-            ctx.fillStyle = `hsla(${p.hue}, 95%, 68%, ${alpha})`;
-            ctx.shadowBlur = 18 * alpha;
-            ctx.shadowColor = `hsla(${p.hue}, 95%, 68%, ${alpha})`;
-            ctx.arc(p.x, p.y, p.size * (1 - t * 0.5), 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${p.hue}, 98%, 72%, ${alpha})`;
+            ctx.shadowBlur = 26 * alpha;
+            ctx.shadowColor = `hsla(${p.hue}, 100%, 70%, ${alpha})`;
+            ctx.arc(p.x, p.y, p.size * (1 - t * 0.45), 0, Math.PI * 2);
             ctx.fill();
             if (p.life >= p.maxLife) sparks.splice(i, 1);
           }
@@ -417,20 +434,20 @@
             const alpha = w.alpha * Math.max(0, 1 - t);
             // Outer ring
             ctx.beginPath();
-            ctx.strokeStyle = `hsla(${w.hue}, 85%, 72%, ${alpha})`;
-            ctx.lineWidth = w.width * (1 - t * 0.55);
-            ctx.shadowBlur = 16 * alpha;
-            ctx.shadowColor = `hsla(${w.hue}, 90%, 70%, ${alpha * 0.8})`;
+            ctx.strokeStyle = `hsla(${w.hue}, 95%, 72%, ${alpha})`;
+            ctx.lineWidth = w.width * (1 - t * 0.5);
+            ctx.shadowBlur = 28 * alpha;
+            ctx.shadowColor = `hsla(${w.hue}, 100%, 70%, ${alpha})`;
             ctx.arc(w.x, w.y, w.r, 0, Math.PI * 2);
             ctx.stroke();
             // Soft fill bloom at epicenter early on
-            if (t < 0.35) {
-              const bloom = ctx.createRadialGradient(w.x, w.y, 0, w.x, w.y, w.r * 0.35 + 8);
-              bloom.addColorStop(0, `hsla(${w.hue}, 90%, 75%, ${alpha * 0.35})`);
+            if (t < 0.4) {
+              const bloom = ctx.createRadialGradient(w.x, w.y, 0, w.x, w.y, w.r * 0.4 + 10);
+              bloom.addColorStop(0, `hsla(${w.hue}, 95%, 78%, ${alpha * 0.5})`);
               bloom.addColorStop(1, 'rgba(0,0,0,0)');
               ctx.fillStyle = bloom;
               ctx.beginPath();
-              ctx.arc(w.x, w.y, w.r * 0.35 + 8, 0, Math.PI * 2);
+              ctx.arc(w.x, w.y, w.r * 0.4 + 10, 0, Math.PI * 2);
               ctx.fill();
             }
             if (w.life >= w.maxLife) shockwaves.splice(i, 1);
