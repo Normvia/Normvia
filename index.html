@@ -132,11 +132,11 @@
           { depth: 1.1, count: 20, stars: [], sizeMin: 1.2, sizeMax: 2.5, pull: 0.058 },
         ];
 
-        // Soft orbital rings — visible but not neon-loud
+        // Orbital rings — clearer stroke so the drifting ellipses read behind Normvia
         const rings = [
-          { rx: 0.28, ry: 0.18, depth: 0.55, alpha: 0.09, hue: 220, rot: 0, spin: 0.0001 },
-          { rx: 0.42, ry: 0.26, depth: 0.85, alpha: 0.07, hue: 195, rot: 0.4, spin: -0.000065 },
-          { rx: 0.58, ry: 0.34, depth: 1.15, alpha: 0.05, hue: 280, rot: 1.1, spin: 0.00004 },
+          { rx: 0.28, ry: 0.18, depth: 0.55, alpha: 0.28, hue: 220, rot: 0, spin: 0.0001 },
+          { rx: 0.42, ry: 0.26, depth: 0.85, alpha: 0.24, hue: 195, rot: 0.4, spin: -0.000065 },
+          { rx: 0.58, ry: 0.34, depth: 1.15, alpha: 0.2, hue: 280, rot: 1.1, spin: 0.00004 },
         ];
 
         const planets = [
@@ -311,13 +311,13 @@
             ctx.rotate(rot);
             ctx.scale(1, ring.ry / ring.rx);
             ctx.beginPath();
-            ctx.strokeStyle = `hsla(${ring.hue}, 68%, 74%, ${ring.alpha})`;
-            ctx.lineWidth = 1.15;
+            ctx.strokeStyle = `hsla(${ring.hue}, 78%, 78%, ${ring.alpha})`;
+            ctx.lineWidth = 2.6;
             ctx.ellipse(0, 0, Math.min(width, height) * ring.rx, Math.min(width, height) * ring.rx, 0, 0, Math.PI * 2);
             ctx.stroke();
             ctx.beginPath();
-            ctx.strokeStyle = `hsla(${ring.hue}, 62%, 80%, ${ring.alpha * 0.55})`;
-            ctx.lineWidth = 0.55;
+            ctx.strokeStyle = `hsla(${ring.hue}, 72%, 88%, ${ring.alpha * 0.7})`;
+            ctx.lineWidth = 1.25;
             ctx.ellipse(0, 0, Math.min(width, height) * ring.rx * 0.97, Math.min(width, height) * ring.rx * 0.97, 0, 0.2, Math.PI * 0.9);
             ctx.stroke();
             ctx.restore();
