@@ -42,8 +42,8 @@
           radial-gradient(
             ellipse at 50% 45%,
             rgba(0, 0, 0, 0) 0%,
-            rgba(0, 0, 0, 0.28) 58%,
-            rgba(0, 0, 0, 0.78) 100%
+            rgba(0, 0, 0, 0.22) 58%,
+            rgba(0, 0, 0, 0.68) 100%
           );
       }
 
@@ -71,7 +71,7 @@
         object-fit: contain;
         image-rendering: -webkit-optimize-contrast;
         image-rendering: crisp-edges;
-        filter: drop-shadow(0 0 16px rgba(160, 190, 255, 0.22));
+        filter: drop-shadow(0 0 16px rgba(160, 190, 255, 0.28));
       }
 
       .brand .tagline {
@@ -92,8 +92,8 @@
         font-size: clamp(2rem, 7vw, 4.5rem);
         text-shadow:
           0 0 10px rgba(255, 255, 255, 0.55),
-          0 0 28px rgba(140, 170, 255, 0.28),
-          0 0 48px rgba(90, 120, 220, 0.18);
+          0 0 28px rgba(140, 170, 255, 0.32),
+          0 0 48px rgba(90, 120, 220, 0.2);
       }
     </style>
   </head>
@@ -124,23 +124,45 @@
         const mouse = { x: 0, y: 0, tx: 0, ty: 0, px: 0, py: 0, tpx: 0, tpy: 0, active: false };
         const idle = { ax: 0, ay: 0 };
 
+        // Midway pull between wild (~0.012–0.09) and calm (~0.0035–0.026)
         const layers = [
-          { depth: 0.15, count: 110, stars: [], sizeMin: 0.35, sizeMax: 0.95, pull: 0.0035 },
-          { depth: 0.4, count: 80, stars: [], sizeMin: 0.55, sizeMax: 1.35, pull: 0.008 },
-          { depth: 0.75, count: 50, stars: [], sizeMin: 0.85, sizeMax: 1.9, pull: 0.016 },
-          { depth: 1.1, count: 22, stars: [], sizeMin: 1.2, sizeMax: 2.5, pull: 0.026 },
+          { depth: 0.15, count: 100, stars: [], sizeMin: 0.35, sizeMax: 0.95, pull: 0.0075 },
+          { depth: 0.4, count: 75, stars: [], sizeMin: 0.55, sizeMax: 1.35, pull: 0.018 },
+          { depth: 0.75, count: 48, stars: [], sizeMin: 0.85, sizeMax: 1.9, pull: 0.035 },
+          { depth: 1.1, count: 20, stars: [], sizeMin: 1.2, sizeMax: 2.5, pull: 0.058 },
         ];
 
+        // Soft orbital rings — visible but not neon-loud
         const rings = [
-          { rx: 0.28, ry: 0.18, depth: 0.55, alpha: 0.035, hue: 220, rot: 0, spin: 0.00008 },
-          { rx: 0.42, ry: 0.26, depth: 0.85, alpha: 0.025, hue: 210, rot: 0.4, spin: -0.00005 },
-          { rx: 0.58, ry: 0.34, depth: 1.15, alpha: 0.018, hue: 230, rot: 1.1, spin: 0.00003 },
+          { rx: 0.28, ry: 0.18, depth: 0.55, alpha: 0.09, hue: 220, rot: 0, spin: 0.0001 },
+          { rx: 0.42, ry: 0.26, depth: 0.85, alpha: 0.07, hue: 195, rot: 0.4, spin: -0.000065 },
+          { rx: 0.58, ry: 0.34, depth: 1.15, alpha: 0.05, hue: 280, rot: 1.1, spin: 0.00004 },
         ];
 
         const planets = [
-          { ox: -0.34, oy: 0.2, r: 36, depth: 0.7, hue: 215, alpha: 0.035 },
-          { ox: 0.4, oy: -0.24, r: 24, depth: 1.0, hue: 225, alpha: 0.028 },
-          { ox: 0.12, oy: 0.34, r: 16, depth: 1.25, hue: 205, alpha: 0.022 },
+          { ox: -0.34, oy: 0.2, r: 34, depth: 0.7, hue: 215, alpha: 0.08 },
+          { ox: 0.4, oy: -0.24, r: 22, depth: 1.0, hue: 300, alpha: 0.065 },
+          { ox: 0.12, oy: 0.34, r: 16, depth: 1.25, hue: 175, alpha: 0.055 },
+        ];
+
+        // Large cosmic nebula clouds — spaced so deep black voids remain
+        // Colors: blues, magentas/reds, golds/yellows, soft greens/teals
+        const nebulaClouds = [
+          { ox: -0.38, oy: -0.22, r: 0.42, rgba: 'rgba(55, 95, 210, 0.11)', mid: 'rgba(40, 70, 160, 0.04)' },
+          { ox: 0.36, oy: -0.28, r: 0.38, rgba: 'rgba(200, 55, 130, 0.10)', mid: 'rgba(160, 40, 100, 0.035)' },
+          { ox: -0.28, oy: 0.34, r: 0.4, rgba: 'rgba(210, 160, 45, 0.09)', mid: 'rgba(170, 120, 30, 0.03)' },
+          { ox: 0.42, oy: 0.3, r: 0.36, rgba: 'rgba(40, 170, 155, 0.10)', mid: 'rgba(30, 130, 120, 0.035)' },
+          { ox: 0.08, oy: 0.02, r: 0.28, rgba: 'rgba(90, 70, 190, 0.07)', mid: 'rgba(60, 45, 140, 0.025)' },
+          { ox: -0.55, oy: 0.05, r: 0.3, rgba: 'rgba(180, 70, 90, 0.07)', mid: 'rgba(140, 45, 65, 0.025)' },
+        ];
+
+        // Multi-hue star accent palette (RGB strings for halo)
+        const starHues = [
+          '140,175,255', // soft blue
+          '210,140,255', // violet
+          '255,190,120', // gold
+          '120,220,200', // teal
+          '255,140,170', // magenta-pink
         ];
 
         const sparks = [];
@@ -162,9 +184,10 @@
                 vx: 0,
                 vy: 0,
                 r: layer.sizeMin + Math.random() * (layer.sizeMax - layer.sizeMin),
-                a: Math.random() * 0.65 + 0.2,
+                a: Math.random() * 0.55 + 0.3,
                 twinkle: Math.random() * 0.025 + 0.004,
                 phase: Math.random() * Math.PI * 2,
+                hueIdx: Math.floor(Math.random() * starHues.length),
               });
             }
           }
@@ -191,11 +214,12 @@
 
         function burst(x, y, magnitude = 1) {
           if (reducedMotion) return;
-          const particles = Math.floor((8 + Math.random() * 10) * magnitude);
-          // Cool white / soft blue only — no rainbow neon
-          const hue = 205 + Math.random() * 30;
+          const particles = Math.floor((14 + Math.random() * 16) * magnitude);
+          // Cosmic palette: blue / magenta / gold / teal — not full rainbow chaos
+          const palette = [210, 320, 45, 175, 280];
+          const baseHue = palette[Math.floor(Math.random() * palette.length)];
           for (let i = 0; i < particles; i += 1) {
-            const speed = (Math.random() * 1.4 + 0.2) * magnitude;
+            const speed = (Math.random() * 2.0 + 0.25) * magnitude;
             const angle = Math.random() * Math.PI * 2;
             sparks.push({
               x,
@@ -203,88 +227,74 @@
               vx: Math.cos(angle) * speed,
               vy: Math.sin(angle) * speed,
               life: 0,
-              maxLife: Math.random() * 45 + 28,
-              size: Math.random() * 1.5 + 0.3,
-              hue: (hue + Math.random() * 24 - 12 + 360) % 360,
+              maxLife: Math.random() * 50 + 30,
+              size: Math.random() * 1.7 + 0.35,
+              hue: (baseHue + Math.random() * 28 - 14 + 360) % 360,
             });
           }
         }
 
         function spawnShockwave(x, y) {
           if (reducedMotion) return;
-          // Soft dual-ring pulse — calm, still readable
+          // Midway pulse — clearly interactive, not wild triple-blast
           shockwaves.push(
-            { x, y, r: 0, maxR: Math.max(width, height) * 0.32, life: 0, maxLife: 70, width: 1.2, hue: 215, alpha: 0.22 },
-            { x, y, r: 4, maxR: Math.max(width, height) * 0.18, life: 0, maxLife: 48, width: 0.8, hue: 225, alpha: 0.16 }
+            { x, y, r: 0, maxR: Math.max(width, height) * 0.44, life: 0, maxLife: 62, width: 2.2, hue: 215, alpha: 0.48 },
+            { x, y, r: 2, maxR: Math.max(width, height) * 0.28, life: 0, maxLife: 48, width: 1.4, hue: 300, alpha: 0.36 },
+            { x, y, r: 6, maxR: Math.max(width, height) * 0.16, life: 0, maxLife: 36, width: 1.0, hue: 175, alpha: 0.28 }
           );
-          // Gentle outward nudge
+          // Midway outward nudge (wild 2.2 / calm 0.55 → ~1.35)
           for (const layer of layers) {
-            const impulse = 0.55 * layer.depth;
+            const impulse = 1.35 * layer.depth;
             for (const star of layer.stars) {
               const dx = star.x - x;
               const dy = star.y - y;
               const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-              if (dist < Math.max(width, height) * 0.45) {
-                const falloff = 1 - dist / (Math.max(width, height) * 0.45);
+              if (dist < Math.max(width, height) * 0.48) {
+                const falloff = 1 - dist / (Math.max(width, height) * 0.48);
                 const force = impulse * falloff * falloff;
                 star.vx += (dx / dist) * force;
                 star.vy += (dy / dist) * force;
               }
             }
           }
-          burst(x, y, 0.45);
+          burst(x, y, 0.8);
         }
 
         function drawNebula(ox, oy) {
-          const cx = width * 0.5 + ox * 0.25;
-          const cy = height * 0.5 + oy * 0.25;
-          // Pure deep space base
+          const cx = width * 0.5 + ox * 0.28;
+          const cy = height * 0.5 + oy * 0.28;
+          // Pure deep space base — voids stay black
           ctx.fillStyle = '#000000';
           ctx.fillRect(0, 0, width, height);
 
-          // Very soft central indigo veil — no neon mush
-          const gradient = ctx.createRadialGradient(
+          // Very soft central depth veil (keeps logo area from going flat)
+          const veil = ctx.createRadialGradient(
             cx,
             cy,
-            20,
+            30,
             cx,
             cy,
-            Math.max(width, height) * 0.78
+            Math.max(width, height) * 0.7
           );
-          gradient.addColorStop(0, 'rgba(8, 12, 28, 0.55)');
-          gradient.addColorStop(0.4, 'rgba(3, 5, 14, 0.35)');
-          gradient.addColorStop(0.75, 'rgba(0, 0, 0, 0.15)');
-          gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          ctx.fillStyle = gradient;
+          veil.addColorStop(0, 'rgba(6, 8, 22, 0.35)');
+          veil.addColorStop(0.45, 'rgba(2, 3, 10, 0.18)');
+          veil.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          ctx.fillStyle = veil;
           ctx.fillRect(0, 0, width, height);
 
-          // Subtle cool-blue accent (desaturated)
-          const g2 = ctx.createRadialGradient(
-            cx - width * 0.22,
-            cy + height * 0.12,
-            0,
-            cx - width * 0.22,
-            cy + height * 0.12,
-            Math.max(width, height) * 0.4
-          );
-          g2.addColorStop(0, 'rgba(70, 100, 180, 0.035)');
-          g2.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          ctx.fillStyle = g2;
-          ctx.fillRect(0, 0, width, height);
-
-          // Soft indigo accent
-          const g3 = ctx.createRadialGradient(
-            cx + width * 0.2,
-            cy - height * 0.14,
-            0,
-            cx + width * 0.2,
-            cy - height * 0.14,
-            Math.max(width, height) * 0.32
-          );
-          g3.addColorStop(0, 'rgba(55, 70, 140, 0.03)');
-          g3.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          ctx.fillStyle = g3;
-          ctx.fillRect(0, 0, width, height);
+          // Large translucent color clouds — cosmic, not microscopic
+          const span = Math.max(width, height);
+          for (const cloud of nebulaClouds) {
+            const x = cx + cloud.ox * width;
+            const y = cy + cloud.oy * height;
+            const radius = span * cloud.r;
+            const g = ctx.createRadialGradient(x, y, 0, x, y, radius);
+            g.addColorStop(0, cloud.rgba);
+            g.addColorStop(0.45, cloud.mid);
+            g.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, width, height);
+          }
         }
 
         function drawRings(px, py, t) {
@@ -299,13 +309,13 @@
             ctx.rotate(rot);
             ctx.scale(1, ring.ry / ring.rx);
             ctx.beginPath();
-            ctx.strokeStyle = `hsla(${ring.hue}, 35%, 72%, ${ring.alpha})`;
-            ctx.lineWidth = 0.9;
+            ctx.strokeStyle = `hsla(${ring.hue}, 55%, 72%, ${ring.alpha})`;
+            ctx.lineWidth = 1.15;
             ctx.ellipse(0, 0, Math.min(width, height) * ring.rx, Math.min(width, height) * ring.rx, 0, 0, Math.PI * 2);
             ctx.stroke();
             ctx.beginPath();
-            ctx.strokeStyle = `hsla(${ring.hue}, 30%, 78%, ${ring.alpha * 0.45})`;
-            ctx.lineWidth = 0.45;
+            ctx.strokeStyle = `hsla(${ring.hue}, 50%, 78%, ${ring.alpha * 0.5})`;
+            ctx.lineWidth = 0.55;
             ctx.ellipse(0, 0, Math.min(width, height) * ring.rx * 0.97, Math.min(width, height) * ring.rx * 0.97, 0, 0.2, Math.PI * 0.9);
             ctx.stroke();
             ctx.restore();
@@ -319,8 +329,8 @@
             const x = cx + p.ox * Math.min(width, height) + px * p.depth * 36;
             const y = cy + p.oy * Math.min(width, height) + py * p.depth * 28;
             const g = ctx.createRadialGradient(x - p.r * 0.3, y - p.r * 0.3, 0, x, y, p.r);
-            g.addColorStop(0, `hsla(${p.hue}, 28%, 62%, ${p.alpha * 1.2})`);
-            g.addColorStop(0.55, `hsla(${p.hue}, 22%, 40%, ${p.alpha * 0.7})`);
+            g.addColorStop(0, `hsla(${p.hue}, 45%, 60%, ${p.alpha * 1.3})`);
+            g.addColorStop(0.55, `hsla(${p.hue}, 35%, 38%, ${p.alpha * 0.75})`);
             g.addColorStop(1, 'rgba(0,0,0,0)');
             ctx.beginPath();
             ctx.fillStyle = g;
@@ -330,7 +340,8 @@
         }
 
         function updateAndDrawStars(px, py, t) {
-          const softRadius = Math.max(width, height) * 0.32;
+          // Midway gravity radius (wild 0.42 / calm 0.32)
+          const softRadius = Math.max(width, height) * 0.37;
           const softRadiusSq = softRadius * softRadius;
 
           for (const layer of layers) {
@@ -339,11 +350,11 @@
 
             for (const star of layer.stars) {
               if (!reducedMotion) {
-                // Home spring (keeps field from collapsing)
+                // Home spring (midway 0.01 between wild 0.008 and calm 0.012)
                 const hx = star.hx - star.x;
                 const hy = star.hy - star.y;
-                star.vx += hx * 0.012;
-                star.vy += hy * 0.012;
+                star.vx += hx * 0.01;
+                star.vy += hy * 0.01;
 
                 // Gravity toward mouse (stronger for nearer layers)
                 if (mouse.active) {
@@ -361,14 +372,14 @@
                   }
                 }
 
-                star.vx *= 0.94;
-                star.vy *= 0.94;
+                star.vx *= 0.93;
+                star.vy *= 0.93;
                 star.x += star.vx;
                 star.y += star.vy;
 
                 star.a += Math.sin(t * 0.001 + star.phase) * star.twinkle * 0.15;
                 star.a += (Math.random() - 0.5) * star.twinkle * 0.3;
-                star.a = Math.min(0.95, Math.max(0.12, star.a));
+                star.a = Math.min(1, Math.max(0.2, star.a));
               }
 
               let sx = star.x + ox;
@@ -378,19 +389,19 @@
               if (sy < -4) sy += height + 8;
               if (sy > height + 4) sy -= height + 8;
 
-              // Crisp white core
-              ctx.beginPath();
-              ctx.fillStyle = `rgba(245,248,255,${star.a})`;
-              ctx.arc(sx, sy, star.r, 0, Math.PI * 2);
-              ctx.fill();
-
-              // Cool-blue halo on nearer / brighter stars only
-              if (layer.depth > 0.65 && star.a > 0.5) {
+              // Multi-hue halo on nearer / brighter stars
+              if (layer.depth > 0.55 && star.a > 0.42) {
                 ctx.beginPath();
-                ctx.fillStyle = `rgba(170,195,255,${star.a * 0.1})`;
-                ctx.arc(sx, sy, star.r * 2.8, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${starHues[star.hueIdx]},${star.a * 0.18})`;
+                ctx.arc(sx, sy, star.r * 3.6, 0, Math.PI * 2);
                 ctx.fill();
               }
+
+              // Crisp white core (drawn after halo so core stays sharp)
+              ctx.beginPath();
+              ctx.fillStyle = `rgba(248,250,255,${star.a})`;
+              ctx.arc(sx, sy, star.r, 0, Math.PI * 2);
+              ctx.fill();
             }
           }
         }
@@ -407,9 +418,9 @@
             const t = p.life / p.maxLife;
             const alpha = Math.max(0, 1 - t);
             ctx.beginPath();
-            ctx.fillStyle = `hsla(${p.hue}, 45%, 82%, ${alpha * 0.85})`;
-            ctx.shadowBlur = 8 * alpha;
-            ctx.shadowColor = `hsla(${p.hue}, 50%, 78%, ${alpha * 0.5})`;
+            ctx.fillStyle = `hsla(${p.hue}, 70%, 76%, ${alpha * 0.9})`;
+            ctx.shadowBlur = 14 * alpha;
+            ctx.shadowColor = `hsla(${p.hue}, 75%, 72%, ${alpha * 0.65})`;
             ctx.arc(p.x, p.y, p.size * (1 - t * 0.5), 0, Math.PI * 2);
             ctx.fill();
             if (p.life >= p.maxLife) sparks.splice(i, 1);
@@ -424,18 +435,16 @@
             const t = w.life / w.maxLife;
             w.r = w.maxR * (1 - Math.pow(1 - t, 2.2));
             const alpha = w.alpha * Math.max(0, 1 - t);
-            // Outer ring
             ctx.beginPath();
-            ctx.strokeStyle = `hsla(${w.hue}, 40%, 78%, ${alpha})`;
+            ctx.strokeStyle = `hsla(${w.hue}, 65%, 76%, ${alpha})`;
             ctx.lineWidth = w.width * (1 - t * 0.5);
-            ctx.shadowBlur = 6 * alpha;
-            ctx.shadowColor = `hsla(${w.hue}, 45%, 75%, ${alpha * 0.45})`;
+            ctx.shadowBlur = 14 * alpha;
+            ctx.shadowColor = `hsla(${w.hue}, 70%, 72%, ${alpha * 0.55})`;
             ctx.arc(w.x, w.y, w.r, 0, Math.PI * 2);
             ctx.stroke();
-            // Soft fill bloom at epicenter early on
             if (t < 0.35) {
               const bloom = ctx.createRadialGradient(w.x, w.y, 0, w.x, w.y, w.r * 0.35 + 8);
-              bloom.addColorStop(0, `hsla(${w.hue}, 35%, 80%, ${alpha * 0.18})`);
+              bloom.addColorStop(0, `hsla(${w.hue}, 55%, 78%, ${alpha * 0.28})`);
               bloom.addColorStop(1, 'rgba(0,0,0,0)');
               ctx.fillStyle = bloom;
               ctx.beginPath();
@@ -499,7 +508,6 @@
           if (reducedMotion) return;
           const x = e.clientX;
           const y = e.clientY;
-          // Prefer click point; if somehow invalid, fall back to center logo
           const cx = Number.isFinite(x) ? x : width * 0.5;
           const cy = Number.isFinite(y) ? y : height * 0.5;
           spawnShockwave(cx, cy);
@@ -513,7 +521,7 @@
               burst(
                 Math.random() * width,
                 Math.random() * height,
-                0.25 + Math.random() * 0.35
+                0.3 + Math.random() * 0.4
               );
               scheduleRandomBursts();
             }
@@ -552,7 +560,7 @@
             burst(
               Math.random() * width,
               Math.random() * height,
-              0.3 + Math.random() * 0.25
+              0.35 + Math.random() * 0.3
             );
           }
           scheduleRandomBursts();
