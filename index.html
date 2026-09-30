@@ -40,12 +40,10 @@
         pointer-events: none;
         background:
           radial-gradient(
-            ellipse at 50% 46%,
-            rgba(0, 0, 0, 0.32) 0%,
-            rgba(0, 0, 0, 0.14) 20%,
-            rgba(0, 0, 0, 0.22) 48%,
-            rgba(0, 0, 0, 0.7) 78%,
-            rgba(0, 0, 0, 0.92) 100%
+            ellipse at 50% 45%,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0.22) 58%,
+            rgba(0, 0, 0, 0.68) 100%
           );
       }
 
@@ -65,14 +63,6 @@
         gap: 1.5rem;
         /* Fixed brand — no parallax / gravity motion */
         transform: none;
-        padding: 2.5rem 3rem;
-        border-radius: 2rem;
-        background: radial-gradient(
-          ellipse at 50% 45%,
-          rgba(0, 0, 0, 0.62) 0%,
-          rgba(0, 0, 0, 0.35) 50%,
-          rgba(0, 0, 0, 0) 100%
-        );
       }
 
       .brand img {
@@ -81,21 +71,16 @@
         object-fit: contain;
         image-rendering: -webkit-optimize-contrast;
         image-rendering: crisp-edges;
-        filter:
-          drop-shadow(0 0 18px rgba(160, 200, 255, 0.35))
-          drop-shadow(0 4px 28px rgba(0, 0, 0, 0.85));
+        filter: drop-shadow(0 0 16px rgba(160, 190, 255, 0.28));
       }
 
       .brand .tagline {
         margin: 0;
-        color: rgba(255, 255, 255, 0.94);
+        color: rgba(255, 255, 255, 0.92);
         font-size: clamp(0.9rem, 2.2vw, 1.2rem);
         letter-spacing: 0.05rem;
         text-align: center;
-        text-shadow:
-          0 0 12px rgba(255, 255, 255, 0.3),
-          0 2px 16px rgba(0, 0, 0, 0.95),
-          0 0 40px rgba(0, 0, 0, 0.8);
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
         max-width: 90vw;
       }
 
@@ -106,10 +91,9 @@
         text-transform: uppercase;
         font-size: clamp(2rem, 7vw, 4.5rem);
         text-shadow:
-          0 0 12px rgba(255, 255, 255, 0.6),
-          0 0 32px rgba(140, 190, 255, 0.38),
-          0 4px 24px rgba(0, 0, 0, 0.95),
-          0 0 60px rgba(0, 0, 0, 0.7);
+          0 0 10px rgba(255, 255, 255, 0.55),
+          0 0 28px rgba(140, 170, 255, 0.32),
+          0 0 48px rgba(90, 120, 220, 0.2);
       }
     </style>
   </head>
@@ -140,66 +124,51 @@
         const mouse = { x: 0, y: 0, tx: 0, ty: 0, px: 0, py: 0, tpx: 0, tpy: 0, active: false };
         const idle = { ax: 0, ay: 0 };
 
-        // Midway pull — unchanged from happy-medium cosmos
+        // Midway pull between wild (~0.012–0.09) and calm (~0.0035–0.026)
         const layers = [
-          { depth: 0.15, count: 160, stars: [], sizeMin: 0.3, sizeMax: 0.85, pull: 0.0075 },
-          { depth: 0.4, count: 120, stars: [], sizeMin: 0.5, sizeMax: 1.25, pull: 0.018 },
-          { depth: 0.75, count: 72, stars: [], sizeMin: 0.8, sizeMax: 1.85, pull: 0.035 },
-          { depth: 1.1, count: 28, stars: [], sizeMin: 1.15, sizeMax: 2.45, pull: 0.058 },
+          { depth: 0.15, count: 100, stars: [], sizeMin: 0.35, sizeMax: 0.95, pull: 0.0075 },
+          { depth: 0.4, count: 75, stars: [], sizeMin: 0.55, sizeMax: 1.35, pull: 0.018 },
+          { depth: 0.75, count: 48, stars: [], sizeMin: 0.85, sizeMax: 1.9, pull: 0.035 },
+          { depth: 1.1, count: 20, stars: [], sizeMin: 1.2, sizeMax: 2.5, pull: 0.058 },
         ];
 
-        // Soft orbital rings — muted so nebula dominates
+        // Soft orbital rings — visible but not neon-loud
         const rings = [
-          { rx: 0.3, ry: 0.2, depth: 0.55, alpha: 0.055, hue: 195, rot: 0, spin: 0.00008 },
-          { rx: 0.46, ry: 0.3, depth: 0.85, alpha: 0.04, hue: 40, rot: 0.4, spin: -0.00005 },
-          { rx: 0.62, ry: 0.38, depth: 1.15, alpha: 0.03, hue: 350, rot: 1.1, spin: 0.00003 },
+          { rx: 0.28, ry: 0.18, depth: 0.55, alpha: 0.09, hue: 220, rot: 0, spin: 0.0001 },
+          { rx: 0.42, ry: 0.26, depth: 0.85, alpha: 0.07, hue: 195, rot: 0.4, spin: -0.000065 },
+          { rx: 0.58, ry: 0.34, depth: 1.15, alpha: 0.05, hue: 280, rot: 1.1, spin: 0.00004 },
         ];
 
         const planets = [
-          { ox: -0.38, oy: 0.24, r: 28, depth: 0.7, hue: 200, alpha: 0.05 },
-          { ox: 0.44, oy: -0.28, r: 18, depth: 1.0, hue: 15, alpha: 0.04 },
-          { ox: 0.14, oy: 0.38, r: 12, depth: 1.25, hue: 45, alpha: 0.035 },
+          { ox: -0.34, oy: 0.2, r: 34, depth: 0.7, hue: 215, alpha: 0.08 },
+          { ox: 0.4, oy: -0.24, r: 22, depth: 1.0, hue: 300, alpha: 0.065 },
+          { ox: 0.12, oy: 0.34, r: 16, depth: 1.25, hue: 175, alpha: 0.055 },
         ];
 
-        // Rosette Nebula palette accents for nearer stars
+        // Soft multi-hue nebula washes — spaced so deep black voids remain
+        // Slightly more vibrant blues/purples/teals/golds than 6c3e677 base
+        const nebulaClouds = [
+          { ox: -0.38, oy: -0.22, r: 0.42, rgba: 'rgba(70, 115, 235, 0.145)', mid: 'rgba(45, 80, 185, 0.055)' },
+          { ox: 0.36, oy: -0.28, r: 0.38, rgba: 'rgba(220, 70, 160, 0.135)', mid: 'rgba(175, 45, 115, 0.048)' },
+          { ox: -0.28, oy: 0.34, r: 0.4, rgba: 'rgba(235, 180, 55, 0.12)', mid: 'rgba(185, 135, 35, 0.042)' },
+          { ox: 0.42, oy: 0.3, r: 0.36, rgba: 'rgba(45, 195, 180, 0.135)', mid: 'rgba(35, 150, 140, 0.048)' },
+          { ox: 0.08, oy: 0.02, r: 0.28, rgba: 'rgba(110, 85, 220, 0.1)', mid: 'rgba(75, 55, 165, 0.035)' },
+          { ox: -0.55, oy: 0.05, r: 0.3, rgba: 'rgba(200, 80, 110, 0.095)', mid: 'rgba(155, 50, 75, 0.035)' },
+        ];
+
+        // Multi-hue star accent palette (RGB strings for halo)
         const starHues = [
-          '180,220,255', // teal-blue core stars
-          '255,220,140', // gold
-          '255,160,120', // orange
-          '255,140,170', // pink-magenta
-          '220,240,255', // crisp white-blue
+          '140,175,255', // soft blue
+          '210,140,255', // violet
+          '255,190,120', // gold
+          '120,220,200', // teal
+          '255,140,170', // magenta-pink
         ];
-
-        // Procedural dark dust filaments (normalized offsets from center)
-        const dustFilaments = [];
-        (function seedDust() {
-          for (let i = 0; i < 14; i += 1) {
-            const a0 = Math.random() * Math.PI * 2;
-            const r0 = 0.18 + Math.random() * 0.22;
-            const pts = [];
-            let a = a0;
-            let r = r0;
-            for (let j = 0; j < 7; j += 1) {
-              pts.push({
-                ox: Math.cos(a) * r,
-                oy: Math.sin(a) * r * 0.92,
-              });
-              a += (Math.random() - 0.35) * 0.55;
-              r += 0.04 + Math.random() * 0.07;
-            }
-            dustFilaments.push({
-              pts,
-              w: 1.2 + Math.random() * 2.4,
-              alpha: 0.18 + Math.random() * 0.22,
-            });
-          }
-        })();
 
         const sparks = [];
         const shockwaves = [];
         let seeded = false;
         let start = performance.now();
-        let nebulaPulse = 0;
 
         function seedStars() {
           for (const layer of layers) {
@@ -215,7 +184,7 @@
                 vx: 0,
                 vy: 0,
                 r: layer.sizeMin + Math.random() * (layer.sizeMax - layer.sizeMin),
-                a: Math.random() * 0.55 + 0.35,
+                a: Math.random() * 0.55 + 0.3,
                 twinkle: Math.random() * 0.025 + 0.004,
                 phase: Math.random() * Math.PI * 2,
                 hueIdx: Math.floor(Math.random() * starHues.length),
@@ -245,13 +214,12 @@
 
         function burst(x, y, magnitude = 1) {
           if (reducedMotion) return;
-          // MUCH bigger fireworks: more particles, faster spray, longer life, trails
-          const particles = Math.floor((90 + Math.random() * 70) * magnitude);
-          // Rosette palette: teal / gold / orange / crimson / pink
-          const palette = [195, 42, 22, 8, 340, 175];
+          const particles = Math.floor((14 + Math.random() * 16) * magnitude);
+          // Cosmic palette: blue / magenta / gold / teal — not full rainbow chaos
+          const palette = [210, 320, 45, 175, 280];
           const baseHue = palette[Math.floor(Math.random() * palette.length)];
           for (let i = 0; i < particles; i += 1) {
-            const speed = (Math.random() * 9.5 + 2.5) * magnitude;
+            const speed = (Math.random() * 2.0 + 0.25) * magnitude;
             const angle = Math.random() * Math.PI * 2;
             sparks.push({
               x,
@@ -259,218 +227,74 @@
               vx: Math.cos(angle) * speed,
               vy: Math.sin(angle) * speed,
               life: 0,
-              maxLife: Math.random() * 120 + 95,
-              size: Math.random() * 4.8 + 1.6,
-              hue: (baseHue + Math.random() * 36 - 18 + 360) % 360,
-              trail: [],
+              maxLife: Math.random() * 50 + 30,
+              size: Math.random() * 1.7 + 0.35,
+              hue: (baseHue + Math.random() * 28 - 14 + 360) % 360,
             });
           }
         }
 
         function spawnShockwave(x, y) {
           if (reducedMotion) return;
-          // Much larger radius rings + longer life
-          const span = Math.max(width, height);
+          // Midway pulse — clearly interactive, not wild triple-blast
           shockwaves.push(
-            { x, y, r: 0, maxR: span * 0.95, life: 0, maxLife: 110, width: 4.5, hue: 195, alpha: 0.62 },
-            { x, y, r: 6, maxR: span * 0.72, life: 0, maxLife: 92, width: 3.4, hue: 40, alpha: 0.5 },
-            { x, y, r: 14, maxR: span * 0.5, life: 0, maxLife: 72, width: 2.6, hue: 8, alpha: 0.42 },
-            { x, y, r: 24, maxR: span * 0.32, life: 0, maxLife: 52, width: 2.0, hue: 340, alpha: 0.34 }
+            { x, y, r: 0, maxR: Math.max(width, height) * 0.44, life: 0, maxLife: 62, width: 2.2, hue: 215, alpha: 0.48 },
+            { x, y, r: 2, maxR: Math.max(width, height) * 0.28, life: 0, maxLife: 48, width: 1.4, hue: 300, alpha: 0.36 },
+            { x, y, r: 6, maxR: Math.max(width, height) * 0.16, life: 0, maxLife: 36, width: 1.0, hue: 175, alpha: 0.28 }
           );
-          // Midway outward nudge (keep mid gravity feel)
+          // Midway outward nudge (wild 2.2 / calm 0.55 → ~1.35)
           for (const layer of layers) {
             const impulse = 1.35 * layer.depth;
             for (const star of layer.stars) {
               const dx = star.x - x;
               const dy = star.y - y;
               const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-              if (dist < span * 0.55) {
-                const falloff = 1 - dist / (span * 0.55);
+              if (dist < Math.max(width, height) * 0.48) {
+                const falloff = 1 - dist / (Math.max(width, height) * 0.48);
                 const force = impulse * falloff * falloff;
                 star.vx += (dx / dist) * force;
                 star.vy += (dy / dist) * force;
               }
             }
           }
-          burst(x, y, 2.2);
+          burst(x, y, 0.8);
         }
 
-        function drawRosetteNebula(ox, oy, t) {
-          const cx = width * 0.5 + ox * 0.22;
-          const cy = height * 0.5 + oy * 0.22;
-          const span = Math.max(width, height);
-          const pulse = reducedMotion ? 1 : 1 + Math.sin(t * 0.00035) * 0.035;
-          nebulaPulse = pulse;
-
-          // True black deep space
+        function drawNebula(ox, oy) {
+          const cx = width * 0.5 + ox * 0.28;
+          const cy = height * 0.5 + oy * 0.28;
+          // Pure deep space base — voids stay black
           ctx.fillStyle = '#000000';
           ctx.fillRect(0, 0, width, height);
 
-          // --- Outer fiery red / orange / pink shell (large circular expanse) ---
-          const outerR = span * 0.62 * pulse;
-          const outer = ctx.createRadialGradient(cx, cy, span * 0.18, cx, cy, outerR);
-          outer.addColorStop(0, 'rgba(0, 0, 0, 0)');
-          outer.addColorStop(0.22, 'rgba(200, 50, 80, 0.14)');
-          outer.addColorStop(0.42, 'rgba(240, 60, 55, 0.38)');
-          outer.addColorStop(0.62, 'rgba(255, 100, 45, 0.48)');
-          outer.addColorStop(0.8, 'rgba(220, 45, 100, 0.32)');
-          outer.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          ctx.fillStyle = outer;
+          // Very soft central depth veil (keeps logo area from going flat)
+          const veil = ctx.createRadialGradient(
+            cx,
+            cy,
+            30,
+            cx,
+            cy,
+            Math.max(width, height) * 0.7
+          );
+          veil.addColorStop(0, 'rgba(6, 8, 22, 0.35)');
+          veil.addColorStop(0.45, 'rgba(2, 3, 10, 0.18)');
+          veil.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          ctx.fillStyle = veil;
           ctx.fillRect(0, 0, width, height);
 
-          // Soft outer magenta bloom (feathered periphery)
-          const mag = ctx.createRadialGradient(cx, cy, span * 0.32, cx, cy, span * 0.78);
-          mag.addColorStop(0, 'rgba(0,0,0,0)');
-          mag.addColorStop(0.4, 'rgba(210, 55, 120, 0.22)');
-          mag.addColorStop(0.7, 'rgba(160, 35, 80, 0.16)');
-          mag.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = mag;
-          ctx.fillRect(0, 0, width, height);
-
-          // --- Bright gold / yellow mid ring ---
-          const midR = span * 0.38 * pulse;
-          const gold = ctx.createRadialGradient(cx, cy, span * 0.08, cx, cy, midR);
-          gold.addColorStop(0, 'rgba(0, 0, 0, 0)');
-          gold.addColorStop(0.28, 'rgba(255, 210, 90, 0.12)');
-          gold.addColorStop(0.5, 'rgba(255, 205, 70, 0.48)');
-          gold.addColorStop(0.68, 'rgba(245, 160, 40, 0.4)');
-          gold.addColorStop(0.85, 'rgba(220, 100, 40, 0.18)');
-          gold.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          ctx.fillStyle = gold;
-          ctx.fillRect(0, 0, width, height);
-
-          // Warm ochre churn blobs along mid ring (billowy, not petri)
-          const churn = [
-            { a: 0.3, r: 0.26, s: 0.22, rgb: '255,185,55', a0: 0.28 },
-            { a: 1.4, r: 0.28, s: 0.2, rgb: '240,140,45', a0: 0.24 },
-            { a: 2.5, r: 0.25, s: 0.24, rgb: '255,210,80', a0: 0.26 },
-            { a: 3.7, r: 0.29, s: 0.19, rgb: '220,100,50', a0: 0.22 },
-            { a: 4.9, r: 0.27, s: 0.21, rgb: '255,160,60', a0: 0.25 },
-            { a: 5.8, r: 0.24, s: 0.23, rgb: '200,80,55', a0: 0.2 },
-          ];
-          for (const blob of churn) {
-            const bx = cx + Math.cos(blob.a + t * 0.00004) * span * blob.r;
-            const by = cy + Math.sin(blob.a + t * 0.00004) * span * blob.r * 0.9;
-            const br = span * blob.s;
-            const g = ctx.createRadialGradient(bx, by, 0, bx, by, br);
-            g.addColorStop(0, `rgba(${blob.rgb},${blob.a0})`);
-            g.addColorStop(0.55, `rgba(${blob.rgb},${blob.a0 * 0.35})`);
-            g.addColorStop(1, 'rgba(0,0,0,0)');
+          // Large translucent color clouds — cosmic, not microscopic
+          const span = Math.max(width, height);
+          for (const cloud of nebulaClouds) {
+            const x = cx + cloud.ox * width;
+            const y = cy + cloud.oy * height;
+            const radius = span * cloud.r;
+            const g = ctx.createRadialGradient(x, y, 0, x, y, radius);
+            g.addColorStop(0, cloud.rgba);
+            g.addColorStop(0.45, cloud.mid);
+            g.addColorStop(1, 'rgba(0, 0, 0, 0)');
             ctx.fillStyle = g;
             ctx.fillRect(0, 0, width, height);
           }
-
-          // --- Teal / cerulean blue center cavity ---
-          const coreR = span * 0.26 * pulse;
-          const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
-          core.addColorStop(0, 'rgba(160, 235, 250, 0.62)');
-          core.addColorStop(0.2, 'rgba(80, 200, 225, 0.55)');
-          core.addColorStop(0.42, 'rgba(45, 160, 205, 0.38)');
-          core.addColorStop(0.68, 'rgba(30, 110, 170, 0.16)');
-          core.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          ctx.fillStyle = core;
-          ctx.fillRect(0, 0, width, height);
-
-          // Inner hot cavity (open flower center)
-          const cavity = ctx.createRadialGradient(cx, cy, 0, cx, cy, span * 0.14);
-          cavity.addColorStop(0, 'rgba(200, 245, 255, 0.55)');
-          cavity.addColorStop(0.3, 'rgba(90, 210, 230, 0.36)');
-          cavity.addColorStop(0.65, 'rgba(40, 140, 190, 0.12)');
-          cavity.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          ctx.fillStyle = cavity;
-          ctx.fillRect(0, 0, width, height);
-
-          // Soft teal halo just inside the gold ring (Rosette cavity edge)
-          const tealRim = ctx.createRadialGradient(cx, cy, span * 0.12, cx, cy, span * 0.3);
-          tealRim.addColorStop(0, 'rgba(0,0,0,0)');
-          tealRim.addColorStop(0.35, 'rgba(70, 190, 215, 0.22)');
-          tealRim.addColorStop(0.7, 'rgba(40, 140, 180, 0.1)');
-          tealRim.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = tealRim;
-          ctx.fillRect(0, 0, width, height);
-
-          // Extra outer red plumes for majestic expanse (corners/edges)
-          const plumes = [
-            { ox: -0.42, oy: -0.32, r: 0.4, c0: 'rgba(220, 50, 75, 0.28)', c1: 'rgba(120, 20, 40, 0.08)' },
-            { ox: 0.4, oy: -0.3, r: 0.38, c0: 'rgba(240, 80, 50, 0.26)', c1: 'rgba(140, 30, 30, 0.08)' },
-            { ox: -0.36, oy: 0.38, r: 0.39, c0: 'rgba(200, 45, 100, 0.24)', c1: 'rgba(100, 20, 50, 0.07)' },
-            { ox: 0.38, oy: 0.36, r: 0.37, c0: 'rgba(250, 90, 45, 0.25)', c1: 'rgba(130, 35, 25, 0.07)' },
-          ];
-          for (const p of plumes) {
-            const px = cx + p.ox * width;
-            const py = cy + p.oy * height;
-            const pr = span * p.r;
-            const g = ctx.createRadialGradient(px, py, 0, px, py, pr);
-            g.addColorStop(0, p.c0);
-            g.addColorStop(0.5, p.c1);
-            g.addColorStop(1, 'rgba(0,0,0,0)');
-            ctx.fillStyle = g;
-            ctx.fillRect(0, 0, width, height);
-          }
-
-          // Soft dark dust lobes along the mid/outer ring
-          const dustLobes = [
-            { a: 0.6, r: 0.3, s: 0.12 },
-            { a: 1.8, r: 0.32, s: 0.1 },
-            { a: 3.1, r: 0.29, s: 0.13 },
-            { a: 4.4, r: 0.33, s: 0.11 },
-            { a: 5.5, r: 0.28, s: 0.12 },
-          ];
-          for (const d of dustLobes) {
-            const dx = cx + Math.cos(d.a) * span * d.r;
-            const dy = cy + Math.sin(d.a) * span * d.r * 0.9;
-            const dr = span * d.s;
-            const dg = ctx.createRadialGradient(dx, dy, 0, dx, dy, dr);
-            dg.addColorStop(0, 'rgba(0,0,0,0.45)');
-            dg.addColorStop(0.5, 'rgba(0,0,0,0.18)');
-            dg.addColorStop(1, 'rgba(0,0,0,0)');
-            ctx.fillStyle = dg;
-            ctx.fillRect(0, 0, width, height);
-          }
-
-          // --- Dark dust filaments (Bok-globule veins) ---
-          ctx.save();
-          ctx.globalCompositeOperation = 'source-over';
-          for (const fil of dustFilaments) {
-            ctx.beginPath();
-            const p0 = fil.pts[0];
-            ctx.moveTo(cx + p0.ox * span, cy + p0.oy * span);
-            for (let i = 1; i < fil.pts.length; i += 1) {
-              const a = fil.pts[i - 1];
-              const b = fil.pts[i];
-              const mx = cx + (a.ox + b.ox) * 0.5 * span;
-              const my = cy + (a.oy + b.oy) * 0.5 * span;
-              ctx.quadraticCurveTo(
-                cx + a.ox * span + (b.ox - a.ox) * span * 0.15,
-                cy + a.oy * span + (b.oy - a.oy) * span * 0.15,
-                mx,
-                my
-              );
-            }
-            ctx.strokeStyle = `rgba(0, 0, 0, ${fil.alpha})`;
-            ctx.lineWidth = fil.w * (span / 900);
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.shadowBlur = 8;
-            ctx.shadowColor = 'rgba(0,0,0,0.5)';
-            ctx.stroke();
-
-            // Soft dark smear alongside filament
-            ctx.strokeStyle = `rgba(0, 0, 0, ${fil.alpha * 0.35})`;
-            ctx.lineWidth = fil.w * 3.5 * (span / 900);
-            ctx.shadowBlur = 14;
-            ctx.stroke();
-          }
-          ctx.shadowBlur = 0;
-          ctx.restore();
-
-          // Subtle center shadow so logo stays readable over bright core
-          const logoShade = ctx.createRadialGradient(cx, cy, 0, cx, cy, span * 0.2);
-          logoShade.addColorStop(0, 'rgba(0, 0, 0, 0.12)');
-          logoShade.addColorStop(0.55, 'rgba(0, 0, 0, 0.05)');
-          logoShade.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          ctx.fillStyle = logoShade;
-          ctx.fillRect(0, 0, width, height);
         }
 
         function drawRings(px, py, t) {
@@ -486,8 +310,13 @@
             ctx.scale(1, ring.ry / ring.rx);
             ctx.beginPath();
             ctx.strokeStyle = `hsla(${ring.hue}, 55%, 72%, ${ring.alpha})`;
-            ctx.lineWidth = 1.05;
+            ctx.lineWidth = 1.15;
             ctx.ellipse(0, 0, Math.min(width, height) * ring.rx, Math.min(width, height) * ring.rx, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.strokeStyle = `hsla(${ring.hue}, 50%, 78%, ${ring.alpha * 0.5})`;
+            ctx.lineWidth = 0.55;
+            ctx.ellipse(0, 0, Math.min(width, height) * ring.rx * 0.97, Math.min(width, height) * ring.rx * 0.97, 0, 0.2, Math.PI * 0.9);
             ctx.stroke();
             ctx.restore();
           }
@@ -511,7 +340,7 @@
         }
 
         function updateAndDrawStars(px, py, t) {
-          // Midway gravity radius
+          // Midway gravity radius (wild 0.42 / calm 0.32)
           const softRadius = Math.max(width, height) * 0.37;
           const softRadiusSq = softRadius * softRadius;
 
@@ -521,19 +350,22 @@
 
             for (const star of layer.stars) {
               if (!reducedMotion) {
+                // Home spring (midway 0.01 between wild 0.008 and calm 0.012)
                 const hx = star.hx - star.x;
                 const hy = star.hy - star.y;
                 star.vx += hx * 0.01;
                 star.vy += hy * 0.01;
 
+                // Gravity toward mouse (stronger for nearer layers)
                 if (mouse.active) {
                   const dx = mouse.px - (star.x + ox);
                   const dy = mouse.py - (star.y + oy);
                   const distSq = dx * dx + dy * dy;
                   if (distSq < softRadiusSq && distSq > 4) {
                     const dist = Math.sqrt(distSq);
+                    // Soft gravity: strongest mid-range, fades near cursor to avoid clumping
                     const near = Math.min(1, dist / 60);
-                    const falloff = 1 - dist / softRadius;
+                    const falloff = (1 - dist / softRadius);
                     const force = layer.pull * falloff * falloff * near;
                     star.vx += (dx / dist) * force;
                     star.vy += (dy / dist) * force;
@@ -547,7 +379,7 @@
 
                 star.a += Math.sin(t * 0.001 + star.phase) * star.twinkle * 0.15;
                 star.a += (Math.random() - 0.5) * star.twinkle * 0.3;
-                star.a = Math.min(1, Math.max(0.25, star.a));
+                star.a = Math.min(1, Math.max(0.2, star.a));
               }
 
               let sx = star.x + ox;
@@ -557,16 +389,17 @@
               if (sy < -4) sy += height + 8;
               if (sy > height + 4) sy -= height + 8;
 
+              // Multi-hue halo on nearer / brighter stars
               if (layer.depth > 0.55 && star.a > 0.42) {
                 ctx.beginPath();
-                ctx.fillStyle = `rgba(${starHues[star.hueIdx]},${star.a * 0.2})`;
-                ctx.arc(sx, sy, star.r * 3.8, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${starHues[star.hueIdx]},${star.a * 0.24})`;
+                ctx.arc(sx, sy, star.r * 3.6, 0, Math.PI * 2);
                 ctx.fill();
               }
 
-              // Crisp white core
+              // Crisp white core (drawn after halo so core stays sharp)
               ctx.beginPath();
-              ctx.fillStyle = `rgba(252,252,255,${star.a})`;
+              ctx.fillStyle = `rgba(248,250,255,${star.a})`;
               ctx.arc(sx, sy, star.r, 0, Math.PI * 2);
               ctx.fill();
             }
@@ -576,37 +409,19 @@
         function updateSparks() {
           for (let i = sparks.length - 1; i >= 0; i -= 1) {
             const p = sparks[i];
-            // Trail history for longer visible streaks
-            p.trail.push({ x: p.x, y: p.y });
-            if (p.trail.length > 16) p.trail.shift();
-
             p.life += 1;
             p.x += p.vx;
             p.y += p.vy;
-            p.vx *= 0.985;
-            p.vy *= 0.985;
-            p.vy += 0.004;
+            p.vx *= 0.988;
+            p.vy *= 0.988;
+            p.vy += 0.003;
             const t = p.life / p.maxLife;
             const alpha = Math.max(0, 1 - t);
-
-            // Draw trail
-            if (p.trail.length > 1) {
-              ctx.beginPath();
-              ctx.moveTo(p.trail[0].x, p.trail[0].y);
-              for (let k = 1; k < p.trail.length; k += 1) {
-                ctx.lineTo(p.trail[k].x, p.trail[k].y);
-              }
-              ctx.strokeStyle = `hsla(${p.hue}, 80%, 72%, ${alpha * 0.45})`;
-              ctx.lineWidth = p.size * (1 - t * 0.4) * 0.85;
-              ctx.lineCap = 'round';
-              ctx.stroke();
-            }
-
             ctx.beginPath();
-            ctx.fillStyle = `hsla(${p.hue}, 85%, 78%, ${alpha * 0.95})`;
-            ctx.shadowBlur = 22 * alpha;
-            ctx.shadowColor = `hsla(${p.hue}, 90%, 70%, ${alpha * 0.75})`;
-            ctx.arc(p.x, p.y, p.size * (1 - t * 0.4), 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${p.hue}, 78%, 78%, ${alpha * 0.92})`;
+            ctx.shadowBlur = 14 * alpha;
+            ctx.shadowColor = `hsla(${p.hue}, 80%, 74%, ${alpha * 0.72})`;
+            ctx.arc(p.x, p.y, p.size * (1 - t * 0.5), 0, Math.PI * 2);
             ctx.fill();
             if (p.life >= p.maxLife) sparks.splice(i, 1);
           }
@@ -621,19 +436,19 @@
             w.r = w.maxR * (1 - Math.pow(1 - t, 2.2));
             const alpha = w.alpha * Math.max(0, 1 - t);
             ctx.beginPath();
-            ctx.strokeStyle = `hsla(${w.hue}, 70%, 78%, ${alpha})`;
-            ctx.lineWidth = w.width * (1 - t * 0.45);
-            ctx.shadowBlur = 20 * alpha;
-            ctx.shadowColor = `hsla(${w.hue}, 80%, 70%, ${alpha * 0.6})`;
+            ctx.strokeStyle = `hsla(${w.hue}, 65%, 76%, ${alpha})`;
+            ctx.lineWidth = w.width * (1 - t * 0.5);
+            ctx.shadowBlur = 14 * alpha;
+            ctx.shadowColor = `hsla(${w.hue}, 70%, 72%, ${alpha * 0.55})`;
             ctx.arc(w.x, w.y, w.r, 0, Math.PI * 2);
             ctx.stroke();
-            if (t < 0.4) {
-              const bloom = ctx.createRadialGradient(w.x, w.y, 0, w.x, w.y, w.r * 0.4 + 12);
-              bloom.addColorStop(0, `hsla(${w.hue}, 60%, 80%, ${alpha * 0.32})`);
+            if (t < 0.35) {
+              const bloom = ctx.createRadialGradient(w.x, w.y, 0, w.x, w.y, w.r * 0.35 + 8);
+              bloom.addColorStop(0, `hsla(${w.hue}, 55%, 78%, ${alpha * 0.28})`);
               bloom.addColorStop(1, 'rgba(0,0,0,0)');
               ctx.fillStyle = bloom;
               ctx.beginPath();
-              ctx.arc(w.x, w.y, w.r * 0.4 + 12, 0, Math.PI * 2);
+              ctx.arc(w.x, w.y, w.r * 0.35 + 8, 0, Math.PI * 2);
               ctx.fill();
             }
             if (w.life >= w.maxLife) shockwaves.splice(i, 1);
@@ -662,7 +477,7 @@
           const py = mouse.y + idle.ay;
 
           ctx.clearRect(0, 0, width, height);
-          drawRosetteNebula(px, py, t);
+          drawNebula(px, py);
           drawPlanets(px, py);
           drawRings(px, py, t);
           updateAndDrawStars(px, py, t);
@@ -706,7 +521,7 @@
               burst(
                 Math.random() * width,
                 Math.random() * height,
-                0.45 + Math.random() * 0.55
+                0.3 + Math.random() * 0.4
               );
               scheduleRandomBursts();
             }
@@ -745,7 +560,7 @@
             burst(
               Math.random() * width,
               Math.random() * height,
-              0.5 + Math.random() * 0.4
+              0.35 + Math.random() * 0.3
             );
           }
           scheduleRandomBursts();
