@@ -120,31 +120,9 @@
         const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
         let reducedMotion = motionQuery.matches;
 
-        // Mouse / gyro: normalized -1..1 for parallax, pixels for gravity
+        // Mouse: normalized -1..1 for parallax, pixels for gravity
         const mouse = { x: 0, y: 0, tx: 0, ty: 0, px: 0, py: 0, tpx: 0, tpy: 0, active: false };
         const idle = { ax: 0, ay: 0 };
-
-        // Gyro parallax on touch / coarse-pointer devices (phones, tablets).
-        // Desktop fine-pointer path stays mouse-only so the two never fight.
-        const finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
-        let useMouseParallax = finePointerQuery.matches;
-        const gyro = {
-          enabled: false,
-          listening: false,
-          permission: 'unknown', // unknown | granted | denied | unsupported
-          baseBeta: null,
-          baseGamma: null,
-          // Degrees of tilt from baseline that map to full ±1 parallax (subtle)
-          sensitivity: 28,
-        };
-
-        function onPointerModeChange() {
-          useMouseParallax = finePointerQuery.matches;
-          // If we gained a fine pointer, stop treating gyro as the driver
-          if (useMouseParallax && gyro.enabled) {
-            mouse.active = false;
-          }
-        }
 
         // Midway pull between wild (~0.012–0.09) and calm (~0.0035–0.026)
         const layers = [
@@ -479,109 +457,23 @@
           requestAnimationFrame(frame);
         }
 
-        function clamp1(v) {
-          return Math.max(-1, Math.min(1, v));
-        }
-
-        function applyParallaxTargets(nx, ny) {
-          mouse.tx = clamp1(nx);
-          mouse.ty = clamp1(ny);
-          // Virtual focus for star gravity — same mapping mouse uses via client coords
-          mouse.tpx = width * 0.5 + mouse.tx * width * 0.35;
-          mouse.tpy = height * 0.5 + mouse.ty * height * 0.35;
-          mouse.active = true;
-        }
-
-        function onDeviceOrientation(e) {
-          if (reducedMotion || useMouseParallax || !gyro.enabled) return;
-          const beta = e.beta;   // front-back tilt, degrees
-          const gamma = e.gamma; // left-right tilt, degrees
-          if (beta == null || gamma == null || !Number.isFinite(beta) || !Number.isFinite(gamma)) {
-            return;
-          }
-
-          // Baseline = first sample after enable so "how you hold it" is center
-          if (gyro.baseBeta === null) {
-            gyro.baseBeta = beta;
-            gyro.baseGamma = gamma;
-          }
-
-          const dx = (gamma - gyro.baseGamma) / gyro.sensitivity;
-          const dy = (beta - gyro.baseBeta) / gyro.sensitivity;
-          applyParallaxTargets(dx, dy);
-        }
-
-        function attachGyroListener() {
-          if (gyro.listening) return;
-          gyro.listening = true;
-          window.addEventListener('deviceorientation', onDeviceOrientation, { passive: true });
-        }
-
-        function enableGyro() {
-          if (gyro.enabled || reducedMotion || useMouseParallax) return;
-          gyro.enabled = true;
-          gyro.baseBeta = null;
-          gyro.baseGamma = null;
-          attachGyroListener();
-        }
-
-        async function requestGyroPermission() {
-          if (reducedMotion || useMouseParallax) return;
-          if (gyro.permission === 'granted') {
-            enableGyro();
-            return;
-          }
-          if (gyro.permission === 'denied' || gyro.permission === 'unsupported') return;
-          if (typeof DeviceOrientationEvent === 'undefined') {
-            gyro.permission = 'unsupported';
-            return;
-          }
-
-          try {
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-              // iOS 13+: must run inside a user gesture (first tap / fireworks)
-              const result = await DeviceOrientationEvent.requestPermission();
-              if (result === 'granted') {
-                gyro.permission = 'granted';
-                enableGyro();
-              } else {
-                gyro.permission = 'denied';
-              }
-            } else {
-              // Android / desktop browsers that expose the event without a prompt
-              gyro.permission = 'granted';
-              enableGyro();
-            }
-          } catch (_) {
-            // Permission API threw or user dismissed — fall back to idle drift only
-            gyro.permission = 'denied';
-          }
-        }
-
         function onPointer(e) {
           if (reducedMotion) return;
-          // Touch / coarse devices: gyro owns parallax; ignore pointermove so they don't fight
-          if (!useMouseParallax) return;
           mouse.active = true;
           const x = (e.clientX / width) * 2 - 1;
           const y = (e.clientY / height) * 2 - 1;
-          mouse.tx = clamp1(x);
-          mouse.ty = clamp1(y);
+          mouse.tx = Math.max(-1, Math.min(1, x));
+          mouse.ty = Math.max(-1, Math.min(1, y));
           mouse.tpx = e.clientX;
           mouse.tpy = e.clientY;
         }
 
         function onPointerLeave() {
-          if (!useMouseParallax) return;
           mouse.active = false;
         }
 
         function onClick(e) {
           if (reducedMotion) return;
-          // First tap: request iOS motion permission, then enable gyro parallax
-          if (!useMouseParallax) {
-            requestGyroPermission();
-          }
           const x = e.clientX;
           const y = e.clientY;
           const cx = Number.isFinite(x) ? x : width * 0.5;
@@ -628,22 +520,6 @@
           motionQuery.addEventListener('change', onMotionChange);
         } else if (motionQuery.addListener) {
           motionQuery.addListener(onMotionChange);
-        }
-        if (finePointerQuery.addEventListener) {
-          finePointerQuery.addEventListener('change', onPointerModeChange);
-        } else if (finePointerQuery.addListener) {
-          finePointerQuery.addListener(onPointerModeChange);
-        }
-
-        // Non-iOS mobile: no permission prompt — arm gyro immediately on coarse devices
-        if (
-          !useMouseParallax &&
-          !reducedMotion &&
-          typeof DeviceOrientationEvent !== 'undefined' &&
-          typeof DeviceOrientationEvent.requestPermission !== 'function'
-        ) {
-          gyro.permission = 'granted';
-          enableGyro();
         }
 
         resize();
